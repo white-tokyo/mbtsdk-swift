@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		A90D4E471CFC03970013F980 /* MilboxTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = A90D4E461CFC03970013F980 /* MilboxTouch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A90D4E4F1CFC03A50013F980 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90D4E4E1CFC03A50013F980 /* Test.swift */; };
+		A90D4E731CFFD0800013F980 /* MBTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90D4E721CFFD0800013F980 /* MBTViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A90D4E431CFC03970013F980 /* MilboxTouch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MilboxTouch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A90D4E461CFC03970013F980 /* MilboxTouch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MilboxTouch.h; sourceTree = "<group>"; };
 		A90D4E481CFC03970013F980 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A90D4E4E1CFC03A50013F980 /* Test.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
+		A90D4E721CFFD0800013F980 /* MBTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBTViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			children = (
 				A90D4E461CFC03970013F980 /* MilboxTouch.h */,
 				A90D4E481CFC03970013F980 /* Info.plist */,
-				A90D4E4E1CFC03A50013F980 /* Test.swift */,
+				A90D4E721CFFD0800013F980 /* MBTViewController.swift */,
 			);
 			path = MilboxTouch;
 			sourceTree = "<group>";
@@ -134,7 +134,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A90D4E4F1CFC03A50013F980 /* Test.swift in Sources */,
+				A90D4E731CFFD0800013F980 /* MBTViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -286,6 +286,7 @@
 				A90D4E4D1CFC03970013F980 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

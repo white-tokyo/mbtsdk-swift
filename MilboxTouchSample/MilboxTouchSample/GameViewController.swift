@@ -9,28 +9,27 @@
 import UIKit
 import QuartzCore
 import SceneKit
+import MilboxTouch
 
-class GameViewController: UIViewController {
+class GameViewController: MBTViewController {
+    var textView: SCNText?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+        let scene = SCNScene()
         
-        // create and add a camera to the scene
+        // create and add a camera t the scene
         let cameraNode = SCNNode()
         cameraNode.camera = SCNCamera()
         scene.rootNode.addChildNode(cameraNode)
-        
-        // place the camera
-        cameraNode.position = SCNVector3(x: 0, y: 0, z: 15)
+        cameraNode.position = SCNVector3(x:0, y:0, z:90)
         
         // create and add a light to the scene
         let lightNode = SCNNode()
         lightNode.light = SCNLight()
         lightNode.light!.type = SCNLightTypeOmni
-        lightNode.position = SCNVector3(x: 0, y: 10, z: 10)
+        lightNode.position = SCNVector3(x:0, y:10, z:10)
         scene.rootNode.addChildNode(lightNode)
         
         // create and add an ambient light to the scene
@@ -40,11 +39,26 @@ class GameViewController: UIViewController {
         ambientLightNode.light!.color = UIColor.darkGrayColor()
         scene.rootNode.addChildNode(ambientLightNode)
         
-        // retrieve the ship node
-        let ship = scene.rootNode.childNodeWithName("ship", recursively: true)!
+        let textNode = SCNNode()
+        textView = SCNText(string: "test", extrusionDepth: 0)
+        textView?.alignmentMode = kCAAlignmentCenter
+        textView?.font = UIFont (name: "Arial", size: 3)
+        textNode.geometry = textView
+        textNode.position = SCNVector3(-15, -5, 0)
+        scene.rootNode.addChildNode(textNode)
         
-        // animate the 3d object
-        ship.runAction(SCNAction.repeatActionForever(SCNAction.rotateByX(0, y: 2, z: 0, duration: 1)))
+        // create and configure a material
+        let material = SCNMaterial()
+        material.diffuse.contents = UIImage(named:"texture")
+        material.specular.contents = UIColor.grayColor()
+        material.locksAmbientWithDiffuse = true
+        
+//         animate the 3D object
+//        let animation:CABasicAnimation = CABasicAnimation(keyPath:"rotation")
+//        animation.toValue = NSValue(SCNVector4:SCNVector4(x:0, y:1, z:0, w:Float(M_PI) * 2))
+//        animation.duration = 5
+//        animation.repeatCount = MAXFLOAT // repeat forever
+//        textNode.addAnimation(animation, forKey:nil)
         
         // retrieve the SCNView
         let scnView = self.view as! SCNView
@@ -52,53 +66,8 @@ class GameViewController: UIViewController {
         // set the scene to the view
         scnView.scene = scene
         
-        // allows the user to manipulate the camera
-        scnView.allowsCameraControl = true
-        
-        // show statistics such as fps and timing information
-        scnView.showsStatistics = true
-        
         // configure the view
         scnView.backgroundColor = UIColor.blackColor()
-        
-        // add a tap gesture recognizer
-        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        scnView.addGestureRecognizer(tapGesture)
-    }
-    
-    func handleTap(gestureRecognize: UIGestureRecognizer) {
-        // retrieve the SCNView
-        let scnView = self.view as! SCNView
-        
-        // check what nodes are tapped
-        let p = gestureRecognize.locationInView(scnView)
-        let hitResults = scnView.hitTest(p, options: nil)
-        // check that we clicked on at least one object
-        if hitResults.count > 0 {
-            // retrieved the first clicked object
-            let result: AnyObject! = hitResults[0]
-            
-            // get its material
-            let material = result.node!.geometry!.firstMaterial!
-            
-            // highlight it
-            SCNTransaction.begin()
-            SCNTransaction.setAnimationDuration(0.5)
-            
-            // on completion - unhighlight
-            SCNTransaction.setCompletionBlock {
-                SCNTransaction.begin()
-                SCNTransaction.setAnimationDuration(0.5)
-                
-                material.emission.contents = UIColor.blackColor()
-                
-                SCNTransaction.commit()
-            }
-            
-            material.emission.contents = UIColor.redColor()
-            
-            SCNTransaction.commit()
-        }
     }
     
     override func shouldAutorotate() -> Bool {
@@ -116,10 +85,14 @@ class GameViewController: UIViewController {
             return .All
         }
     }
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
+    override func onTap() {
+        textView?.string = "タップ！"
+    }
+    override func onDoubleTap() {
+        textView?.string = "ダブルタップ！"
+    }
+    override func onScroll(rad: CGFloat) {
+        textView?.string = "スクロール（\(rad)度）"
     }
 
 }
