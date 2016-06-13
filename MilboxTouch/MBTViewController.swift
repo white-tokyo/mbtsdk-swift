@@ -14,8 +14,13 @@ public class MBTViewController: UIViewController {
     
     /// ヘルパーのセットアップが完了しているか
     var setupState: MBTViewControllerState {
-        return _setupState
+        if let setupState = state as? MBTSetupState {
+            return setupState.isSettingUp ? .SettingUp : .NotReady
+        }
+        return .Ready
     }
+    var setupStageCount = 5
+    var setupAllowableSpan: CGFloat = 10
     
     // イベントを検知する誤差範囲パラメータ
     var tapDetectSpan: CGFloat = 1
@@ -24,56 +29,75 @@ public class MBTViewController: UIViewController {
     var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
     var swipeDetectSpan: CGFloat = 50
     
-    private var _setupState: MBTViewControllerState = .NotReady
+    private var currentSetupStageCount = 0
+    private var setupStageAllowed = false
+    
+    private var leftLimit: CGFloat = 0
+    private var rightLimit: CGFloat = 0
     private var tapStartTime: NSDate = NSDate(timeIntervalSince1970: 0)
     private var tapStartPosition: CGFloat = 0
     private var lastTapTime: NSDate = NSDate(timeIntervalSince1970: 0)
     private var lastTapPosition: CGFloat = 0
     private var lastMovePosition: CGFloat = 0
     
+    private var state: MBTState!
+    
     /**
      call before use MBTHelper
      */
-    func setup() {
-        if setupState == .Ready {
-            return
+    public func setup() {
+        if state is MBTSetupState {
+            let ss = MBTSetupState()
+            ss.stageLimit = setupStageCount
+            ss.setupAllowableSpan = setupAllowableSpan
+            ss.isSettingUp = true
+            state = ss
         }
-        _setupState = .SettingUp
-        
-        //セットアップ完了したらonsetupCompleted
     }
-    
     public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        NSLog("tapstart")
         if let touch = touches.first {
-            tapStartTime = NSDate()
-            tapStartPosition = touch.locationInView(self.view).y
-            lastMovePosition = tapStartPosition
+            let position = touch.locationInView(self.view).y
+            state.touchBegan(position)
         }
     }
     public override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        NSLog("moveing")
         if let touch = touches.first {
-            let currentPos = touch.locationInView(self.view).y
-            let delta = currentPos - lastMovePosition
-            if fabs(delta) > tapDetectSpan {
-                onScroll(delta)
+            let position = touch.locationInView(self.view).y
+            state.touchMoved(position)
+            if let detectState = state as? MBTDetectState {
+                let delta = position - lastMovePosition
+                if fabs(delta) > tapDetectSpan {
+                    onScroll(delta)
+                }
+                lastMovePosition = position
             }
-            lastMovePosition = currentPos
         }
     }
     public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-//        NSLog("ended")
+        //        NSLog("ended")
         if let touch = touches.first {
             let tappingTime = NSDate().timeIntervalSinceDate(tapStartTime)
             let endPosition = touch.locationInView(self.view).y
+            state.touchEnded(endPosition)
             
-            //detect tap,doubleTap
-            if fabs(tapStartPosition - endPosition) < tapDetectSpan {
-                if tappingTime < tapDetectTimeSpan {
-                    tapDetected(endPosition)
+            if let setupState = state as? MBTSetupState {
+                if setupState.setupCompleted {
+                    NSLog("セットアップ完了")
+                    onSetupCompleted()
+                    state = MBTDetectState()
                 }
             }
+            
+            if setupState == .SettingUp {//初期化処理ステージ
+            }else if setupState == .Ready {//通常
+                //detect tap,doubleTap
+                if fabs(tapStartPosition - endPosition) < tapDetectSpan {
+                    if tappingTime < tapDetectTimeSpan {
+                        tapDetected(endPosition)
+                    }
+                }
+            }
+            
         }
     }
     
@@ -91,8 +115,12 @@ public class MBTViewController: UIViewController {
      回転イベント
      - parameter rad: 時計回りの回転角
      */
-    public func onScroll(rad: CGFloat) {
+    public func onScroll(rad: CGFloat) {//時計回りは左方向に検知される
         NSLog("onscroll")
+    }
+    
+    public func onSetupCompleted() {
+        NSLog("setup is completed!")
     }
     
     func tapDetected(position: CGFloat) {
@@ -252,8 +280,157 @@ public class MBTViewController: UIViewController {
  
 	}
  
-
+ 
  */
+
+class MBTState {
+    func touchBegan(position: CGFloat) {
+        NSLog("Override me !")
+    }
+    func touchMoved(position: CGFloat) {
+        NSLog("Override me !")
+    }
+    func touchEnded(position: CGFloat) {
+        NSLog("Override me !")
+    }
+}
+
+class MBTSetupState: MBTState {
+    var stageLimit: Int = 5
+    var currentStageCount: Int = 0
+    var isSettingUp: Bool = false {
+        didSet {
+            if oldValue && !isSettingUp {//trueからfalseへの変更拒否
+                isSettingUp = true
+                return
+            }
+            if isSettingUp && !oldValue {
+                NSLog("初期化開始")
+                currentStageCount = 0
+                stageAllowed = false
+                stageStarted = false
+            }
+        }
+    }
+    var stageAllowed = false
+    var setupAllowableSpan: CGFloat = 10
+    var leftLimit: CGFloat = 0
+    var rightLimit: CGFloat = 0
+    var stageStarted = false
+    var setupCompleted: Bool {
+        return stageLimit <= currentStageCount
+    }
+    
+    override func touchBegan(position: CGFloat){
+        if !isSettingUp{
+            isSettingUp = true
+        }
+        if stageStarted {
+            NSLog("開始と終了は交互に呼んでね")
+            return
+        }
+        stageStarted = true
+        if currentStageCount == 0 {
+            leftLimit = position
+            rightLimit = position
+            NSLog("ステージ0開始")
+            return
+        }
+        stageAllowed = fabs(leftLimit - position) < setupAllowableSpan || fabs(rightLimit - position) < setupAllowableSpan
+    }
+    override func touchEnded(position: CGFloat){
+        if !isSettingUp{
+            isSettingUp = true
+            return
+        }
+        if !stageStarted {
+            NSLog("開始と終了は交互に呼んでね")
+            return
+        }
+        stageStarted = false
+        if currentStageCount == 0 {
+            leftLimit = min(position, leftLimit)
+            rightLimit = max(position, rightLimit)
+            currentStageCount = 1
+            NSLog("ステージ０完了")
+            return
+        }
+        if !stageAllowed {//やり直し
+            NSLog("ステージ\(currentStageCount)の開始ポイント誤差あり。やり直し")
+            currentStageCount = 0
+            return
+        }
+        if fabs(leftLimit - position) < setupAllowableSpan || fabs(rightLimit - position) < setupAllowableSpan {
+            NSLog("ステージ\(currentStageCount)完了")
+            currentStageCount += 1
+        }else{
+            NSLog("ステージ\(currentStageCount)の終了ポイント誤差あり。やり直し")
+            currentStageCount = 0
+        }
+    }
+    
+}
+
+class MBTDetectState: MBTState {
+    var tapDetectSpan: CGFloat = 10
+    var tapDetectTimeSpan: NSTimeInterval = 0.3
+    var doubleTapDetectSpan: CGFloat = 10
+    var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
+    
+    var tapStartTime: NSDate = NSDate()
+    var tapStartPosition: CGFloat = 0
+    var lastMovePosition: CGFloat = 0
+    var moveDelta: CGFloat = 0
+    var lastTap:Tap?
+    
+    override func touchBegan(position:CGFloat) {
+        tapStartTime = NSDate()
+        tapStartPosition = position
+        lastMovePosition = tapStartPosition
+    }
+    override func touchMoved(position: CGFloat){
+        moveDelta = position - lastMovePosition
+        lastMovePosition = position
+    }
+    override func touchEnded(position: CGFloat){
+        let currentTime = NSDate()
+        let tappingTime = currentTime.timeIntervalSinceDate(tapStartTime)
+        if fabs(tapStartPosition - position) < tapDetectSpan {
+            if tappingTime < tapDetectTimeSpan {//tap!
+                let currentTap = Tap(position: position, time: currentTime)
+                if lastTap!.isDoubleTap(currentTap, detectSpan: doubleTapDetectSpan, detectTimeSpan: doubleTapDetectTimeSpan) {
+                    //onDoubleTap()
+                    lastTap = Tap(position: 0, time: NSDate(timeIntervalSince1970: 0))
+                    return
+                }else {
+                    //onTap()
+                    lastTap = currentTap
+                }
+            }
+        }
+    }
+    
+    func checkScroll() -> CGFloat? {
+        if fabs(moveDelta) > tapDetectSpan {
+            return moveDelta
+        }
+        return nil
+    }
+}
+
+class Tap {
+    var position: CGFloat
+    var time: NSDate
+    
+    init(position:CGFloat,time: NSDate = NSDate()){
+        self.position = position
+        self.time = time
+    }
+    
+    func isDoubleTap(secondTap: Tap,detectSpan: CGFloat, detectTimeSpan: NSTimeInterval) -> Bool{
+        return fabs(position-secondTap.position) < detectSpan && secondTap.time.timeIntervalSinceDate(time) < detectTimeSpan
+    }
+}
 
 
 @objc public enum SwipeDirection: Int {

@@ -7,19 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A90D4E471CFC03970013F980 /* MilboxTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = A90D4E461CFC03970013F980 /* MilboxTouch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A90D4E731CFFD0800013F980 /* MBTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90D4E721CFFD0800013F980 /* MBTViewController.swift */; };
+		A94E69BE1D0E3B420046E20E /* MilboxTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = A94E69BD1D0E3B420046E20E /* MilboxTouch.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A94E69EE1D0E3F010046E20E /* MBTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94E69ED1D0E3F010046E20E /* MBTViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		A90D4E431CFC03970013F980 /* MilboxTouch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MilboxTouch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		A90D4E461CFC03970013F980 /* MilboxTouch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MilboxTouch.h; sourceTree = "<group>"; };
-		A90D4E481CFC03970013F980 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A90D4E721CFFD0800013F980 /* MBTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBTViewController.swift; sourceTree = "<group>"; };
+		A94E69BA1D0E3B420046E20E /* MilboxTouch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MilboxTouch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A94E69BD1D0E3B420046E20E /* MilboxTouch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MilboxTouch.h; sourceTree = "<group>"; };
+		A94E69BF1D0E3B420046E20E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		A94E69ED1D0E3F010046E20E /* MBTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBTViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		A90D4E3F1CFC03970013F980 /* Frameworks */ = {
+		A94E69B61D0E3B420046E20E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -29,28 +29,28 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		A90D4E391CFC03970013F980 = {
+		A94E69B01D0E3B420046E20E = {
 			isa = PBXGroup;
 			children = (
-				A90D4E451CFC03970013F980 /* MilboxTouch */,
-				A90D4E441CFC03970013F980 /* Products */,
+				A94E69BC1D0E3B420046E20E /* MilboxTouch */,
+				A94E69BB1D0E3B420046E20E /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		A90D4E441CFC03970013F980 /* Products */ = {
+		A94E69BB1D0E3B420046E20E /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				A90D4E431CFC03970013F980 /* MilboxTouch.framework */,
+				A94E69BA1D0E3B420046E20E /* MilboxTouch.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A90D4E451CFC03970013F980 /* MilboxTouch */ = {
+		A94E69BC1D0E3B420046E20E /* MilboxTouch */ = {
 			isa = PBXGroup;
 			children = (
-				A90D4E461CFC03970013F980 /* MilboxTouch.h */,
-				A90D4E481CFC03970013F980 /* Info.plist */,
-				A90D4E721CFFD0800013F980 /* MBTViewController.swift */,
+				A94E69BD1D0E3B420046E20E /* MilboxTouch.h */,
+				A94E69BF1D0E3B420046E20E /* Info.plist */,
+				A94E69ED1D0E3F010046E20E /* MBTViewController.swift */,
 			);
 			path = MilboxTouch;
 			sourceTree = "<group>";
@@ -58,25 +58,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		A90D4E401CFC03970013F980 /* Headers */ = {
+		A94E69B71D0E3B420046E20E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A90D4E471CFC03970013F980 /* MilboxTouch.h in Headers */,
+				A94E69BE1D0E3B420046E20E /* MilboxTouch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		A90D4E421CFC03970013F980 /* MilboxTouch */ = {
+		A94E69B91D0E3B420046E20E /* MilboxTouch */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A90D4E4B1CFC03970013F980 /* Build configuration list for PBXNativeTarget "MilboxTouch" */;
+			buildConfigurationList = A94E69C21D0E3B420046E20E /* Build configuration list for PBXNativeTarget "MilboxTouch" */;
 			buildPhases = (
-				A90D4E3E1CFC03970013F980 /* Sources */,
-				A90D4E3F1CFC03970013F980 /* Frameworks */,
-				A90D4E401CFC03970013F980 /* Headers */,
-				A90D4E411CFC03970013F980 /* Resources */,
+				A94E69B51D0E3B420046E20E /* Sources */,
+				A94E69B61D0E3B420046E20E /* Frameworks */,
+				A94E69B71D0E3B420046E20E /* Headers */,
+				A94E69B81D0E3B420046E20E /* Resources */,
 			);
 			buildRules = (
 			);
@@ -84,43 +84,43 @@
 			);
 			name = MilboxTouch;
 			productName = MilboxTouch;
-			productReference = A90D4E431CFC03970013F980 /* MilboxTouch.framework */;
+			productReference = A94E69BA1D0E3B420046E20E /* MilboxTouch.framework */;
 			productType = "com.apple.product-type.framework";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		A90D4E3A1CFC03970013F980 /* Project object */ = {
+		A94E69B11D0E3B420046E20E /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = white;
 				TargetAttributes = {
-					A90D4E421CFC03970013F980 = {
+					A94E69B91D0E3B420046E20E = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = D83CHVSCX4;
 					};
 				};
 			};
-			buildConfigurationList = A90D4E3D1CFC03970013F980 /* Build configuration list for PBXProject "MilboxTouch" */;
+			buildConfigurationList = A94E69B41D0E3B420046E20E /* Build configuration list for PBXProject "MilboxTouch" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 			);
-			mainGroup = A90D4E391CFC03970013F980;
-			productRefGroup = A90D4E441CFC03970013F980 /* Products */;
+			mainGroup = A94E69B01D0E3B420046E20E;
+			productRefGroup = A94E69BB1D0E3B420046E20E /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				A90D4E421CFC03970013F980 /* MilboxTouch */,
+				A94E69B91D0E3B420046E20E /* MilboxTouch */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		A90D4E411CFC03970013F980 /* Resources */ = {
+		A94E69B81D0E3B420046E20E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -130,18 +130,18 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		A90D4E3E1CFC03970013F980 /* Sources */ = {
+		A94E69B51D0E3B420046E20E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A90D4E731CFFD0800013F980 /* MBTViewController.swift in Sources */,
+				A94E69EE1D0E3F010046E20E /* MBTViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		A90D4E491CFC03970013F980 /* Debug */ = {
+		A94E69C01D0E3B420046E20E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -190,7 +190,7 @@
 			};
 			name = Debug;
 		};
-		A90D4E4A1CFC03970013F980 /* Release */ = {
+		A94E69C11D0E3B420046E20E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -232,7 +232,7 @@
 			};
 			name = Release;
 		};
-		A90D4E4C1CFC03970013F980 /* Debug */ = {
+		A94E69C31D0E3B420046E20E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -250,7 +250,7 @@
 			};
 			name = Debug;
 		};
-		A90D4E4D1CFC03970013F980 /* Release */ = {
+		A94E69C41D0E3B420046E20E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -270,25 +270,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		A90D4E3D1CFC03970013F980 /* Build configuration list for PBXProject "MilboxTouch" */ = {
+		A94E69B41D0E3B420046E20E /* Build configuration list for PBXProject "MilboxTouch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A90D4E491CFC03970013F980 /* Debug */,
-				A90D4E4A1CFC03970013F980 /* Release */,
+				A94E69C01D0E3B420046E20E /* Debug */,
+				A94E69C11D0E3B420046E20E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		A90D4E4B1CFC03970013F980 /* Build configuration list for PBXNativeTarget "MilboxTouch" */ = {
+		A94E69C21D0E3B420046E20E /* Build configuration list for PBXNativeTarget "MilboxTouch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A90D4E4C1CFC03970013F980 /* Debug */,
-				A90D4E4D1CFC03970013F980 /* Release */,
+				A94E69C31D0E3B420046E20E /* Debug */,
+				A94E69C41D0E3B420046E20E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = A90D4E3A1CFC03970013F980 /* Project object */;
+	rootObject = A94E69B11D0E3B420046E20E /* Project object */;
 }

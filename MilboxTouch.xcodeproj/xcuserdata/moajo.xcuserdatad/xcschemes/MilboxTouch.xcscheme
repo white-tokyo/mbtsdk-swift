@@ -14,7 +14,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "A90D4E421CFC03970013F980"
+               BlueprintIdentifier = "A94E69B91D0E3B420046E20E"
                BuildableName = "MilboxTouch.framework"
                BlueprintName = "MilboxTouch"
                ReferencedContainer = "container:MilboxTouch.xcodeproj">
@@ -45,7 +45,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A90D4E421CFC03970013F980"
+            BlueprintIdentifier = "A94E69B91D0E3B420046E20E"
             BuildableName = "MilboxTouch.framework"
             BlueprintName = "MilboxTouch"
             ReferencedContainer = "container:MilboxTouch.xcodeproj">
@@ -63,7 +63,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "A90D4E421CFC03970013F980"
+            BlueprintIdentifier = "A94E69B91D0E3B420046E20E"
             BuildableName = "MilboxTouch.framework"
             BlueprintName = "MilboxTouch"
             ReferencedContainer = "container:MilboxTouch.xcodeproj">

@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  MilboxTouchSample
 //
-//  Created by TakumiOhtani on 2016/05/30.
+//  Created by TakumiOhtani on 2016/06/13.
 //  Copyright © 2016年 white. All rights reserved.
 //
 
