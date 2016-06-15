@@ -53,13 +53,6 @@ class GameViewController: MBTViewController {
         material.specular.contents = UIColor.grayColor()
         material.locksAmbientWithDiffuse = true
         
-        //         animate the 3D object
-        //        let animation:CABasicAnimation = CABasicAnimation(keyPath:"rotation")
-        //        animation.toValue = NSValue(SCNVector4:SCNVector4(x:0, y:1, z:0, w:Float(M_PI) * 2))
-        //        animation.duration = 5
-        //        animation.repeatCount = MAXFLOAT // repeat forever
-        //        textNode.addAnimation(animation, forKey:nil)
-        
         // retrieve the SCNView
         let scnView = self.view as! SCNView
         
@@ -95,6 +88,9 @@ class GameViewController: MBTViewController {
     }
     override func onScroll(rad: CGFloat) {
         textView?.string = "スクロール（\(rad)度）"
+    }
+    override func onSwipe(speed: CGFloat, direction: SwipeDirection) {
+        textView?.string = "スワイプ（\(speed)）"
     }
     
 }

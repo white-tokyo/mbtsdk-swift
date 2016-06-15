@@ -34,13 +34,8 @@ public class MBTViewController: UIViewController {
     
     private var leftLimit: CGFloat = 0
     private var rightLimit: CGFloat = 0
-    private var tapStartTime: NSDate = NSDate(timeIntervalSince1970: 0)
-    private var tapStartPosition: CGFloat = 0
-    private var lastTapTime: NSDate = NSDate(timeIntervalSince1970: 0)
-    private var lastTapPosition: CGFloat = 0
-    private var lastMovePosition: CGFloat = 0
     
-    private var state: MBTState!
+    private var state: MBTState! = MBTSetupState()
     
     /**
      call before use MBTHelper
@@ -57,6 +52,7 @@ public class MBTViewController: UIViewController {
     public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.locationInView(self.view).y
+            NSLog("began position:\(position)")
             state.touchBegan(position)
         }
     }
@@ -65,18 +61,15 @@ public class MBTViewController: UIViewController {
             let position = touch.locationInView(self.view).y
             state.touchMoved(position)
             if let detectState = state as? MBTDetectState {
-                let delta = position - lastMovePosition
-                if fabs(delta) > tapDetectSpan {
+                if let delta = detectState.checkScroll() {
                     onScroll(delta)
                 }
-                lastMovePosition = position
             }
         }
     }
     public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
         //        NSLog("ended")
         if let touch = touches.first {
-            let tappingTime = NSDate().timeIntervalSinceDate(tapStartTime)
             let endPosition = touch.locationInView(self.view).y
             state.touchEnded(endPosition)
             
@@ -86,15 +79,13 @@ public class MBTViewController: UIViewController {
                     onSetupCompleted()
                     state = MBTDetectState()
                 }
-            }
-            
-            if setupState == .SettingUp {//初期化処理ステージ
-            }else if setupState == .Ready {//通常
-                //detect tap,doubleTap
-                if fabs(tapStartPosition - endPosition) < tapDetectSpan {
-                    if tappingTime < tapDetectTimeSpan {
-                        tapDetected(endPosition)
-                    }
+            }else if let detectState = state as? MBTDetectState {
+                if detectState.checkTap() {
+                    onTap()
+                }else if detectState.checkDoubleTap() {
+                    onDoubleTap()
+                }else if let swipe = detectState.checkSwipe() {
+                    onSwipe(swipe.speed, direction: swipe.direction)
                 }
             }
             
@@ -122,166 +113,7 @@ public class MBTViewController: UIViewController {
     public func onSetupCompleted() {
         NSLog("setup is completed!")
     }
-    
-    func tapDetected(position: CGFloat) {
-        let currentTime = NSDate()
-        let tapIntervalTime = currentTime.timeIntervalSinceDate(lastTapTime)
-        if tapIntervalTime < doubleTapDetectTimeSpan {
-            if fabs(position - lastTapPosition) < doubleTapDetectSpan {
-                onDoubleTap()
-                lastTapTime = NSDate(timeIntervalSince1970: 0)
-                return
-            }
-        }
-        onTap()
-        lastTapPosition = position
-        lastTapTime = currentTime
-    }
 }
-
-
-/*
- public delegate void Trigger();
-	public delegate void TouchPad(float x, float y);
-	public delegate void Gesture(string name);
-	public delegate void Clockwise(bool flg, float avr);
- 
-	//タップの許容時間
-	public const float tapDetectTime = 1.0f;
- 
-	//タップの許容移動距離
-	public const float tapDetectLength = 15.0f;
- 
-	//ダブルタップの許容時間
-	public float doubleTapDetectTime = 0.3f;
- 
-	public float minSwipeDistX;
-	public float minSwipeDistY;
- 
-	private Vector2 tapBeganPos = Vector2.zero;
-	private float touchTime = 0.0f;
-	private float lastTapTime = 0.0f;
-	private int tapCountPerTime = 0;
-	private int lastTime = 0;
-	private bool charged = false;
- 
-	//回転は数フレーム分のアベレージを取る
-	private	const int	CLOCK_AVR_NUM			= 5;
-	private	const float	CLOCK_AVR_THRESHOLD 	= 1.0f;		//TODO 端末によって解像度が違うので何かしらの方法で最大近辺最小近辺を取得して適宜な値に動的に調整が好ましい
-	public	float		clockAvr;
- 
- 
- // charge - 一定フレーム以内に複数の反応があった場合
- // doubleTap - 一定秒数以内に複数回のタップがあった場合
-	}
- 
-	void Update () {
- 
- MBTTouch.Update();
- CarcAvarage();
- 
- if (MBTTouch.touchCount == 0) {
- return;
- }
- 
- //check charge
- if(!charged){
- if (lastTime == (int)Time.time) {
- tapCountPerTime += 1;
- 
- if (tapCountPerTime > chargeDetectTapCount) {
- charged = true;
- OnCharge ();
- }
- } else {
- tapCountPerTime = 0;
- lastTime = (int)Time.time;
- }
- }
- 
- switch (MBTTouch.phase) {
- case TouchPhase.Began:
- tapBeganPos = MBTTouch.position;
- break;
- case TouchPhase.Moved:
- case TouchPhase.Stationary:
- touchTime += Time.deltaTime;
- 
- Vector3 vp = MBTTouch.deltaPosition;
- if (vp.sqrMagnitude > tapDetectLength*tapDetectLength) {
- if (vp.x*vp.x > vp.y*vp.y){
- OnScroll(MBTTouch.position.x, 0);
- } else {
- OnScroll(0, MBTTouch.position.y);
- }
- }
- 
- if( CLOCK_AVR_THRESHOLD < clockAvr )
- {
- OnClockwise(false, clockAvr);		//TODO ここで機種依存の値、clockAvrを渡しているが機種依存しない形に修正したい
- }
- else if( clockAvr < -CLOCK_AVR_THRESHOLD )
- {
- OnClockwise(true, clockAvr);		//TODO 上記に同じ
- }
- 
- break;
- 
- case TouchPhase.Ended:
- case TouchPhase.Canceled:
- 
- var endPos = MBTTouch.position;
- 
- //check tap and double tap.
- if (touchTime < tapDetectTime) {
- if ((endPos - tapBeganPos).sqrMagnitude < tapDetectLength*tapDetectLength) {
- if ((Time.time - lastTapTime) < doubleTapDetectTime) {
- OnDoubleTap ();
- lastTapTime = 0f;
- } else {
- OnTap ();
- lastTapTime = Time.time;
- }
- touchTime = 0.0f;
- return;
- }
- }
- 
- if (Mathf.Abs (endPos.x - tapBeganPos.x) > minSwipeDistX) {
- 
- if (endPos.x > tapBeganPos.x) {
- OnSwipe ("RIGHTSwipe");
- } else {
- OnSwipe ("LEFTSwipe");
- }
- }else if (Mathf.Abs (endPos.y - tapBeganPos.y) > minSwipeDistY) {
- 
- if (endPos.y > tapBeganPos.y) {
- OnSwipe ("UPSwipe");
- } else{
- OnSwipe ("DownSwipe");
- }
- }
- touchTime = 0.0f;
- break;
- }
- 
-	}
- 
-	private void CarcAvarage()
-	{
- float dx = 0f;
- if( 0 < MBTTouch.touchCount )
- {
- dx = MBTTouch.deltaPosition.x;
- }
- 
- clockAvr = (clockAvr*(CLOCK_AVR_NUM-1) + dx) / CLOCK_AVR_NUM;
- 
-	}
- 
- 
- */
 
 class MBTState {
     func touchBegan(position: CGFloat) {
@@ -372,7 +204,7 @@ class MBTSetupState: MBTState {
 }
 
 class MBTDetectState: MBTState {
-    var tapDetectSpan: CGFloat = 10
+    var tapDetectSpan: CGFloat = 1
     var tapDetectTimeSpan: NSTimeInterval = 0.3
     var doubleTapDetectSpan: CGFloat = 10
     var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
@@ -382,39 +214,78 @@ class MBTDetectState: MBTState {
     var lastMovePosition: CGFloat = 0
     var moveDelta: CGFloat = 0
     var lastTap:Tap?
+    private var isDoubleTap: Bool = false
+    private var isTap: Bool = false
+    private var swipe: Swipe?
     
     override func touchBegan(position:CGFloat) {
+        NSLog("DetectStateタップ開始")
         tapStartTime = NSDate()
         tapStartPosition = position
         lastMovePosition = tapStartPosition
     }
     override func touchMoved(position: CGFloat){
+        NSLog("detectState移動")
         moveDelta = position - lastMovePosition
         lastMovePosition = position
     }
     override func touchEnded(position: CGFloat){
+        NSLog("detectState終了")
         let currentTime = NSDate()
         let tappingTime = currentTime.timeIntervalSinceDate(tapStartTime)
-        if fabs(tapStartPosition - position) < tapDetectSpan {
-            if tappingTime < tapDetectTimeSpan {//tap!
-                let currentTap = Tap(position: position, time: currentTime)
-                if lastTap!.isDoubleTap(currentTap, detectSpan: doubleTapDetectSpan, detectTimeSpan: doubleTapDetectTimeSpan) {
-                    //onDoubleTap()
-                    lastTap = Tap(position: 0, time: NSDate(timeIntervalSince1970: 0))
-                    return
-                }else {
-                    //onTap()
-                    lastTap = currentTap
-                }
+        if touchIsTap(position, tappingTimeSpan: tappingTime) {
+            let currentTap = Tap(position: position, time: currentTime)
+            if lastTap?.isDoubleTap(currentTap, detectSpan: doubleTapDetectSpan, detectTimeSpan: doubleTapDetectTimeSpan) ?? false {
+                NSLog("ダブルタップ")
+                isDoubleTap = true
+                lastTap = nil
+            }else {
+                NSLog("タップ検知")
+                isTap = true
+                lastTap = currentTap
             }
+        }else if toucheIsSwipe(position, tappingTimeSpan: tappingTime) {
+            NSLog("スワイプ検知:")
+            let sp = tapStartPosition
+            let ep = position
+            swipe = Swipe(startPosition: sp, endPosition: ep, timeSpan: tappingTime)
         }
     }
+    
     
     func checkScroll() -> CGFloat? {
         if fabs(moveDelta) > tapDetectSpan {
             return moveDelta
         }
         return nil
+    }
+    func checkTap() -> Bool {
+        let tap = isTap
+        isTap = false
+        return tap
+    }
+    func checkDoubleTap() -> Bool {
+        let doubleTap = isDoubleTap
+        isDoubleTap = false
+        return doubleTap
+    }
+    func checkSwipe() -> Swipe? {
+        if let swipe = swipe {
+            self.swipe = nil
+            return swipe
+        }
+        return nil
+    }
+    
+    private func touchIsTap(position: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
+        let spanCheck = fabs(tapStartPosition - position) < tapDetectSpan
+        let timeCheck = tappingTimeSpan < tapDetectTimeSpan
+        return spanCheck && timeCheck
+    }
+    private func toucheIsSwipe(position: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
+        let spanCheck = fabs(tapStartPosition - position) > tapDetectSpan
+        let timeCheck = tappingTimeSpan < tapDetectTimeSpan
+        return spanCheck && timeCheck
     }
 }
 
@@ -430,6 +301,27 @@ class Tap {
     func isDoubleTap(secondTap: Tap,detectSpan: CGFloat, detectTimeSpan: NSTimeInterval) -> Bool{
         return fabs(position-secondTap.position) < detectSpan && secondTap.time.timeIntervalSinceDate(time) < detectTimeSpan
     }
+}
+class Swipe {
+    var startPosition: CGFloat
+    var endPosition: CGFloat
+    var timeSpan: NSTimeInterval
+    
+    var speed:CGFloat {
+        let dist = endPosition-startPosition
+        let dt = CGFloat(timeSpan)
+        return dist / dt
+    }
+    var direction: SwipeDirection {
+        return .Right
+    }
+    
+    init(startPosition:CGFloat,endPosition:CGFloat,timeSpan:NSTimeInterval) {
+        self.startPosition = startPosition
+        self.endPosition = endPosition
+        self.timeSpan = timeSpan
+    }
+    
 }
 
 

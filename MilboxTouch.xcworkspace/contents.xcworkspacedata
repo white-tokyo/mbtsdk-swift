@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:Milbox360movieSample/Milbox360movieSample.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:MilboxTouchSample/MilboxTouchSample.xcodeproj">
    </FileRef>
    <FileRef

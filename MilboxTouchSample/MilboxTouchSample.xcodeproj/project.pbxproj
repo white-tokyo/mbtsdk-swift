@@ -13,8 +13,8 @@
 		A94E69DB1D0E3BC80046E20E /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A94E69D91D0E3BC80046E20E /* Main.storyboard */; };
 		A94E69DD1D0E3BC80046E20E /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A94E69DC1D0E3BC80046E20E /* Assets.xcassets */; };
 		A94E69E01D0E3BC80046E20E /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A94E69DE1D0E3BC80046E20E /* LaunchScreen.storyboard */; };
-		A94E69E81D0E3CFC0046E20E /* MilboxTouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A94E69E71D0E3CFC0046E20E /* MilboxTouch.framework */; };
-		A94E69EA1D0E3E3F0046E20E /* MilboxTouch.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A94E69E71D0E3CFC0046E20E /* MilboxTouch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A98A94301D0F9D5000252A39 /* MilboxTouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98A942F1D0F9D5000252A39 /* MilboxTouch.framework */; };
+		A98A94311D0F9D5E00252A39 /* MilboxTouch.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A98A942F1D0F9D5000252A39 /* MilboxTouch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +24,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				A94E69EA1D0E3E3F0046E20E /* MilboxTouch.framework in CopyFiles */,
+				A98A94311D0F9D5E00252A39 /* MilboxTouch.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,7 +39,7 @@
 		A94E69DC1D0E3BC80046E20E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		A94E69DF1D0E3BC80046E20E /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A94E69E11D0E3BC80046E20E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A94E69E71D0E3CFC0046E20E /* MilboxTouch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MilboxTouch.framework; path = "../../../../Library/Developer/Xcode/DerivedData/MilboxTouch-fzdhzjpemfsxlngrfpuatzwdhbcx/Build/Products/Debug-iphoneos/MilboxTouch.framework"; sourceTree = "<group>"; };
+		A98A942F1D0F9D5000252A39 /* MilboxTouch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MilboxTouch.framework; path = "../../../../Library/Developer/Xcode/DerivedData/MilboxTouch-euhgmbovxbnavyhgmqirdkwwpfko/Build/Products/Debug-iphoneos/MilboxTouch.framework"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -47,7 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A94E69E81D0E3CFC0046E20E /* MilboxTouch.framework in Frameworks */,
+				A98A94301D0F9D5000252A39 /* MilboxTouch.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,7 +57,7 @@
 		A94E69C71D0E3BC80046E20E = {
 			isa = PBXGroup;
 			children = (
-				A94E69E71D0E3CFC0046E20E /* MilboxTouch.framework */,
+				A98A942F1D0F9D5000252A39 /* MilboxTouch.framework */,
 				A94E69D21D0E3BC80046E20E /* MilboxTouchSample */,
 				A94E69D11D0E3BC80046E20E /* Products */,
 			);
