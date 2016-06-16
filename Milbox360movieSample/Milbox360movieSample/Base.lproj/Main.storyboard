@@ -41,18 +41,6 @@
                                     </mask>
                                 </variation>
                             </sceneKitView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Xzo-PG-e7j">
-                                <rect key="frame" x="20" y="552" width="40" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="j3n-6Z-YaT"/>
-                                    <constraint firstAttribute="width" constant="40" id="k7w-Dt-hoh"/>
-                                </constraints>
-                                <inset key="contentEdgeInsets" minX="8" minY="8" maxX="8" maxY="8"/>
-                                <state key="normal" image="play.png"/>
-                                <connections>
-                                    <action selector="playPausePlayer" destination="BYZ-38-t0r" eventType="touchUpInside" id="XrB-WC-2gE"/>
-                                </connections>
-                            </button>
                             <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VW4-ky-bIA">
                                 <rect key="frame" x="66" y="557" width="516" height="31"/>
                                 <connections>
@@ -60,17 +48,6 @@
                                     <action selector="sliderStartSliding:" destination="BYZ-38-t0r" eventType="touchDown" id="jvF-yM-IHd"/>
                                 </connections>
                             </slider>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yAl-tc-MHs">
-                                <rect key="frame" x="20" y="20" width="41" height="25"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="41" id="Bgd-Pj-K19"/>
-                                    <constraint firstAttribute="height" constant="25" id="hCz-Nj-iee"/>
-                                </constraints>
-                                <state key="normal" image="cardboardOn.png"/>
-                                <connections>
-                                    <action selector="activateCardboardView:" destination="BYZ-38-t0r" eventType="touchUpInside" id="oPE-7e-3LU"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-c1-fm5">
                                 <rect key="frame" x="540" y="13" width="40" height="40"/>
                                 <constraints>
@@ -86,9 +63,7 @@
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="VW4-ky-bIA" firstAttribute="leading" secondItem="Xzo-PG-e7j" secondAttribute="trailing" constant="8" id="0Iv-DR-fM4"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="136-Ea-60d"/>
-                            <constraint firstItem="yAl-tc-MHs" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="20" id="1m1-QM-k5V"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JsU-yv-DqX" secondAttribute="bottom" id="6we-Dp-8cu"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="6ww-1V-zRn"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ABl-HP-njB"/>
@@ -96,9 +71,7 @@
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JsU-yv-DqX" secondAttribute="bottom" id="EdC-iA-1HM"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="bottom" id="Qmp-oY-Isv"/>
                             <constraint firstItem="3TB-c1-fm5" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="13" id="WNY-bw-myC"/>
-                            <constraint firstItem="Xzo-PG-e7j" firstAttribute="centerY" secondItem="VW4-ky-bIA" secondAttribute="centerY" id="WUU-WJ-eEu"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="top" id="WhA-3p-JzE"/>
-                            <constraint firstItem="yAl-tc-MHs" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" constant="20" id="ZYi-t2-bIr"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="leading" secondItem="Js6-CC-VKa" secondAttribute="trailing" id="aQg-06-ccl"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="abM-cA-7HT"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dTT-GZ-R8b"/>
@@ -144,11 +117,9 @@
                         </variation>
                     </view>
                     <connections>
-                        <outlet property="cardboardButton" destination="yAl-tc-MHs" id="wsl-bW-LWL"/>
                         <outlet property="heightSceneConstraint" destination="ueM-nB-pXD" id="Gng-de-95o"/>
                         <outlet property="leftSceneView" destination="Js6-CC-VKa" id="p6K-GI-cb2"/>
                         <outlet property="orientationButton" destination="3TB-c1-fm5" id="Dcf-OF-pSE"/>
-                        <outlet property="playButton" destination="Xzo-PG-e7j" id="P3C-8B-VC3"/>
                         <outlet property="playerSlideBar" destination="VW4-ky-bIA" id="gJa-mJ-tr0"/>
                         <outlet property="rightSceneView" destination="JsU-yv-DqX" id="hts-kH-Mu4"/>
                         <outlet property="widthSceneConstraint" destination="zw0-Rl-jc9" id="XwY-aa-Bk4"/>
@@ -161,7 +132,5 @@
     </scenes>
     <resources>
         <image name="arrows.png" width="256" height="256"/>
-        <image name="cardboardOn.png" width="87" height="51"/>
-        <image name="play.png" width="31" height="31"/>
     </resources>
 </document>

@@ -68,7 +68,7 @@ public class MBTViewController: UIViewController {
         }
     }
     public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-        //        NSLog("ended")
+                NSLog("ended")
         if let touch = touches.first {
             let endPosition = touch.locationInView(self.view).y
             state.touchEnded(endPosition)
@@ -219,18 +219,18 @@ class MBTDetectState: MBTState {
     private var swipe: Swipe?
     
     override func touchBegan(position:CGFloat) {
-        NSLog("DetectStateタップ開始")
+//        NSLog("DetectStateタップ開始")
         tapStartTime = NSDate()
         tapStartPosition = position
         lastMovePosition = tapStartPosition
     }
     override func touchMoved(position: CGFloat){
-        NSLog("detectState移動")
+//        NSLog("detectState移動")
         moveDelta = position - lastMovePosition
         lastMovePosition = position
     }
     override func touchEnded(position: CGFloat){
-        NSLog("detectState終了")
+//        NSLog("detectState終了")
         let currentTime = NSDate()
         let tappingTime = currentTime.timeIntervalSinceDate(tapStartTime)
         if touchIsTap(position, tappingTimeSpan: tappingTime) {

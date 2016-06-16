@@ -14,17 +14,15 @@ import AVFoundation
 import Foundation
 import Darwin
 import CoreGraphics
+import MilboxTouch
 
 // ViewController
-class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecognizerDelegate {
+class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureRecognizerDelegate {
     
     @IBOutlet weak var leftSceneView                : SCNView!
     @IBOutlet weak var rightSceneView               : SCNView!
     
-    @IBOutlet weak var playButton                   : UIButton!
     @IBOutlet weak var playerSlideBar               : UISlider!
-    
-    @IBOutlet weak var cardboardButton              : UIButton!
     
     @IBOutlet weak var heightSceneConstraint        : NSLayoutConstraint!
     @IBOutlet weak var widthSceneConstraint         : NSLayoutConstraint!
@@ -171,15 +169,6 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
         motionManager?.deviceMotionUpdateInterval   = 1.0 / 60.0
         motionManager?.startDeviceMotionUpdatesUsingReferenceFrame(CMAttitudeReferenceFrame.XArbitraryZVertical)
         
-        // Add gestures on screen
-        recognizer                                  = UITapGestureRecognizer(target: self, action:#selector(ViewController.tapTheScreen))
-        recognizer!.delegate                        = self
-        view.addGestureRecognizer(recognizer!)
-        
-        panRecognizer                               = UIPanGestureRecognizer(target: self, action: #selector(ViewController.panGesture(_:)))
-        panRecognizer?.delegate                     = self
-        view.addGestureRecognizer(panRecognizer!)
-        
         //Initialize position variable (for the panGesture)
         currentAngleX                               = 0
         currentAngleY                               = 0
@@ -189,6 +178,7 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
         
         //Launch the player
         play()
+        m_togglePlayPause()
         
     }
     
@@ -331,64 +321,38 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
                 }
             )
             
-            playPausePlayer()
+            m_togglePlayPause()
         }
     }
     
-    @IBAction func playPausePlayer() {
-        
+    func m_togglePlayPause() {
         for videoSpriteKitNode in videosSpriteKitNode {
-            if true == playingVideo {
+            if playingVideo {
+                
+                NSLog("ポース")
                 videoSpriteKitNode.pause()
             } else {
+                NSLog("再開")
                 videoSpriteKitNode.play()
             }
         }
-        
         playingVideo = !playingVideo
-        playButton.setImage(UIImage(named: (true == playingVideo) ? "pause@3x.png" : "play@3x.png"), forState: .Normal)
-        
     }
-    
-    //MARK: Touch Methods
-    func tapTheScreen(){
-        
+    override func onSetupCompleted() {
+        NSLog("初期化完了！！！！！！")
+        m_togglePlayPause()
+    }
+    override func onTap() {
         if (hiddenButton){
-            playButton.hidden                                               = false
             playerSlideBar.hidden                                           = false
-            cardboardButton.hidden                                          = false
             orientationButton.hidden                                        = false
         }else {
-            playButton.hidden                                               = true
             playerSlideBar.hidden                                           = true
-            cardboardButton.hidden                                          = true
             orientationButton.hidden                                        = true
         }
         
-        hiddenButton                                                        = !hiddenButton
-    }
-    
-    func panGesture(sender: UIPanGestureRecognizer){
-        
-        let translation                                                     = sender.translationInView(sender.view!)
-        let protection : Float                                              = 2.0
-        
-        if (abs(Float(translation.x) - oldX) >= protection){
-            let newAngleX                                                   = Float(translation.x) - oldX - protection
-            currentAngleX                                                   = newAngleX/100 + currentAngleX
-            oldX                                                            = Float(translation.x)
-        }
-        
-        if (abs(Float(translation.y) - oldY) >= protection){
-            let newAngleY                                                   = Float(translation.y) - oldY - protection
-            currentAngleY                                                   = newAngleY/100 + currentAngleY
-            oldY                                                            = Float(translation.y)
-        }
-        
-        if(sender.state == UIGestureRecognizerState.Ended) {
-            oldX                                                            = 0
-            oldY                                                            = 0
-        }
+        hiddenButton = !hiddenButton
+        m_togglePlayPause()
     }
     
     
@@ -445,7 +409,7 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
     
     private func playerItemDuration() -> CMTime {
         
-        let thePlayerItem                                                   = player.currentItem
+        let thePlayerItem = player.currentItem
         
         if AVPlayerItemStatus.ReadyToPlay == thePlayerItem?.status {
             return thePlayerItem?.duration ?? kCMTimeInvalid
@@ -465,11 +429,19 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
         
         let duration = Float(CMTimeGetSeconds(playerDuration))
         if isfinite(duration) && (duration > 0) {
-            print(duration,Float64(duration) * Float64(playerSlideBar.value))
+            print(duration,Float64(duration) * Float64(playerSlideBar.value))//ここから、スライダは０−１、スクロールを秒数で前後する。
+//            let a = Int32(NSEC_PER_SEC)
             player.seekToTime(CMTimeMakeWithSeconds(Float64(duration) * Float64(playerSlideBar.value), 60000))
-            playPausePlayer()
+            m_togglePlayPause()
         }
         
+    }
+    override func onScroll(rad: CGFloat) {
+        NSLog("スクロール:\(rad)")
+        
+        var currentTime:Float64 = CMTimeGetSeconds(player.currentTime())
+        currentTime += Float64(rad)
+        player.seekToTime(CMTimeMakeWithSeconds(currentTime,Int32(NSEC_PER_SEC)), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
     }
     
     @IBAction func sliderStartSliding(sender: AnyObject) {
@@ -479,36 +451,16 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
         }
         
         playingVideo = false
-        playButton.setImage(UIImage(named: (true == playingVideo) ? "pause@3x.png" : "play@3x.png"), forState: .Normal)
-        
-    }
-    
-    //MARK: Cardboard on-off
-    @IBAction func activateCardboardView(sender: AnyObject) {
-        
-        cardboardViewOn                                         = !cardboardViewOn
-        displayIfNeededCardboardView()
-        
-    }
-    
-    private func displayIfNeededCardboardView() {
-        
-        let width                                               = (view.bounds.width > view.bounds.height) ? view.bounds.width : view.bounds.height;
-        
-        widthSceneConstraint?.constant                          = (true == cardboardViewOn) ? (width / 2.0) : 1
-        heightSceneConstraint?.constant                         = (true == cardboardViewOn) ? (width / 2.0) : 1
-        leftSceneView.hidden                                    = (false == cardboardViewOn)
-        
-        cardboardButton?.setImage(UIImage(named: (true == cardboardViewOn) ? "cardboardOn" : "cardboardOff"), forState: .Normal)
         
     }
     
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let _ = leftSceneView, _ = rightSceneView {
-            displayIfNeededCardboardView()
-        }
+        let width = (view.bounds.width > view.bounds.height) ? view.bounds.width : view.bounds.height;
+        
+        widthSceneConstraint?.constant = width / 2.0
+        heightSceneConstraint?.constant = width / 2.0
     }
     
     //MARK: Clean perf
@@ -553,5 +505,8 @@ class ViewController: UIViewController, SCNSceneRendererDelegate, UIGestureRecog
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
         
+    }
+    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+        return true
     }
 }
