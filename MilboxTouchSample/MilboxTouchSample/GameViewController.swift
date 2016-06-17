@@ -90,7 +90,7 @@ class GameViewController: MBTViewController {
         textView?.string = "スクロール（\(rad)度）"
     }
     override func onSwipe(speed: CGFloat, direction: SwipeDirection) {
-        textView?.string = "スワイプ（\(speed)）"
+        textView?.string = "スワイプ:（\(speed),dir:\(direction.rawValue)）"
     }
     
 }

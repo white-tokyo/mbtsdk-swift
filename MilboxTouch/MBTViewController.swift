@@ -76,6 +76,8 @@ public class MBTViewController: UIViewController {
             if let setupState = state as? MBTSetupState {
                 if setupState.setupCompleted {
                     NSLog("セットアップ完了")
+                    leftLimit = setupState.leftLimit
+                    rightLimit = setupState.rightLimit
                     onSetupCompleted()
                     state = MBTDetectState()
                 }
@@ -158,7 +160,7 @@ class MBTSetupState: MBTState {
             isSettingUp = true
         }
         if stageStarted {
-            NSLog("開始と終了は交互に呼んでね")
+//            NSLog("開始と終了は交互に呼ぶ")
             return
         }
         stageStarted = true
@@ -176,7 +178,7 @@ class MBTSetupState: MBTState {
             return
         }
         if !stageStarted {
-            NSLog("開始と終了は交互に呼んでね")
+//            NSLog("開始と終了は交互に呼ぶ")
             return
         }
         stageStarted = false
@@ -313,7 +315,7 @@ class Swipe {
         return dist / dt
     }
     var direction: SwipeDirection {
-        return .Right
+        return startPosition > endPosition ? .Right : .Left
     }
     
     init(startPosition:CGFloat,endPosition:CGFloat,timeSpan:NSTimeInterval) {

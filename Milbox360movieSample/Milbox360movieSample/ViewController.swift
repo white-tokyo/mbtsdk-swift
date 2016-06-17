@@ -170,7 +170,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
 //        widthSceneConstraint?.active                = (.Portrait != toInterfaceOrientation && .PortraitUpsideDown != toInterfaceOrientation)
 //        heightSceneConstraint?.active               = (.Portrait == toInterfaceOrientation || .PortraitUpsideDown == toInterfaceOrientation)
         
-        //なんかポーズしても勝手に再生される・・・！！！！！！！！！！！
         for cameraNode in camerasNode {
             cameraNode.eulerAngles                  = SCNVector3Make(Float(camerasNodeAngles[0]), Float(camerasNodeAngles[1]), Float(camerasNodeAngles[2]))
         }
@@ -303,7 +302,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
         NSLog("ポース")
 //        player.pause()
         for videoSpriteKitNode in videosSpriteKitNode {
-            NSLog("現在ポーズ？\(videoSpriteKitNode.paused)")
             videoSpriteKitNode.pause()
         }
         
@@ -313,14 +311,13 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
         NSLog("再開")
 //        player.play()
         for videoSpriteKitNode in videosSpriteKitNode {
-            NSLog("現在ポーズ？\(videoSpriteKitNode.paused)")
             videoSpriteKitNode.play()
         }
         playingVideo = true
     }
     
     override func onSetupCompleted() {
-        NSLog("初期化完了！！！！！！")
+        NSLog("初期化完了")
     }
     
     override func onTap() {
