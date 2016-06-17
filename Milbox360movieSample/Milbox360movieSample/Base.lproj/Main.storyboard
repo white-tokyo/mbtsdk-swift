@@ -3,7 +3,6 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Controller-->
@@ -18,11 +17,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JsU-yv-DqX">
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" loops="NO" translatesAutoresizingMaskIntoConstraints="NO" id="JsU-yv-DqX">
                                 <rect key="frame" x="300" y="0.0" width="300" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </sceneKitView>
-                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Js6-CC-VKa">
+                            <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" loops="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Js6-CC-VKa">
                                 <rect key="frame" x="0.0" y="0.0" width="300" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
@@ -41,25 +40,6 @@
                                     </mask>
                                 </variation>
                             </sceneKitView>
-                            <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" continuous="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VW4-ky-bIA">
-                                <rect key="frame" x="66" y="557" width="516" height="31"/>
-                                <connections>
-                                    <action selector="sliderChangeProgression:" destination="BYZ-38-t0r" eventType="valueChanged" id="AoY-gy-7Sl"/>
-                                    <action selector="sliderStartSliding:" destination="BYZ-38-t0r" eventType="touchDown" id="jvF-yM-IHd"/>
-                                </connections>
-                            </slider>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3TB-c1-fm5">
-                                <rect key="frame" x="540" y="13" width="40" height="40"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="40" id="f1P-ML-3gf"/>
-                                    <constraint firstAttribute="width" constant="40" id="zce-L1-sqN"/>
-                                </constraints>
-                                <inset key="contentEdgeInsets" minX="10" minY="10" maxX="10" maxY="10"/>
-                                <state key="normal" image="arrows.png"/>
-                                <connections>
-                                    <action selector="backToCenter" destination="BYZ-38-t0r" eventType="touchUpInside" id="H00-0B-cLO"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
@@ -70,7 +50,6 @@
                             <constraint firstAttribute="trailing" secondItem="JsU-yv-DqX" secondAttribute="trailing" id="D66-jC-Yau"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JsU-yv-DqX" secondAttribute="bottom" id="EdC-iA-1HM"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="bottom" id="Qmp-oY-Isv"/>
-                            <constraint firstItem="3TB-c1-fm5" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="topMargin" constant="13" id="WNY-bw-myC"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="top" id="WhA-3p-JzE"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="leading" secondItem="Js6-CC-VKa" secondAttribute="trailing" id="aQg-06-ccl"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="abM-cA-7HT"/>
@@ -78,11 +57,7 @@
                             <constraint firstAttribute="trailing" secondItem="JsU-yv-DqX" secondAttribute="trailing" id="iBf-B5-Y1g"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="bottom" id="kI0-VP-Es8"/>
                             <constraint firstAttribute="trailing" secondItem="Js6-CC-VKa" secondAttribute="trailing" id="kMM-1f-9wr"/>
-                            <constraint firstAttribute="trailing" secondItem="3TB-c1-fm5" secondAttribute="trailing" constant="20" id="mUt-I8-RSd"/>
-                            <constraint firstItem="VW4-ky-bIA" firstAttribute="trailing" secondItem="8bC-Xf-vdC" secondAttribute="trailingMargin" id="pUb-Cc-Zzr"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="rPm-vR-9q2"/>
-                            <constraint firstItem="VW4-ky-bIA" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leadingMargin" constant="48" id="tg3-h9-Lwc"/>
-                            <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="VW4-ky-bIA" secondAttribute="bottom" constant="13" id="yvk-a8-y69"/>
                         </constraints>
                         <variation key="default">
                             <mask key="constraints">
@@ -119,8 +94,6 @@
                     <connections>
                         <outlet property="heightSceneConstraint" destination="ueM-nB-pXD" id="Gng-de-95o"/>
                         <outlet property="leftSceneView" destination="Js6-CC-VKa" id="p6K-GI-cb2"/>
-                        <outlet property="orientationButton" destination="3TB-c1-fm5" id="Dcf-OF-pSE"/>
-                        <outlet property="playerSlideBar" destination="VW4-ky-bIA" id="gJa-mJ-tr0"/>
                         <outlet property="rightSceneView" destination="JsU-yv-DqX" id="hts-kH-Mu4"/>
                         <outlet property="widthSceneConstraint" destination="zw0-Rl-jc9" id="XwY-aa-Bk4"/>
                     </connections>
@@ -130,7 +103,4 @@
             <point key="canvasLocation" x="364" y="389"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="arrows.png" width="256" height="256"/>
-    </resources>
 </document>

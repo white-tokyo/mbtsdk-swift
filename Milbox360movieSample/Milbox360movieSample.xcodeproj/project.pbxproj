@@ -13,13 +13,10 @@
 		A98A948D1D11134B00252A39 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A98A948C1D11134B00252A39 /* Assets.xcassets */; };
 		A98A94901D11134B00252A39 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = A98A948E1D11134B00252A39 /* LaunchScreen.storyboard */; };
 		A98A94991D1113AA00252A39 /* 04.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = A98A94981D1113AA00252A39 /* 04.mp4 */; };
-		A98A949B1D1114D600252A39 /* cardboardOn.png in Resources */ = {isa = PBXBuildFile; fileRef = A98A949A1D1114D600252A39 /* cardboardOn.png */; };
-		A98A949D1D1114E300252A39 /* cardboardOff.png in Resources */ = {isa = PBXBuildFile; fileRef = A98A949C1D1114E300252A39 /* cardboardOff.png */; };
-		A98A949F1D11150000252A39 /* arrows.png in Resources */ = {isa = PBXBuildFile; fileRef = A98A949E1D11150000252A39 /* arrows.png */; };
 		A98A94A11D11150C00252A39 /* pause@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A98A94A01D11150C00252A39 /* pause@3x.png */; };
 		A98A94A31D11151100252A39 /* play@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = A98A94A21D11151100252A39 /* play@3x.png */; };
 		A98A94A51D111AF200252A39 /* MilboxTouch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98A94A41D111AF200252A39 /* MilboxTouch.framework */; };
-		A98A94A71D111B0400252A39 /* MilboxTouch.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A98A94A41D111AF200252A39 /* MilboxTouch.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A98A94A71D111B0400252A39 /* MilboxTouch.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A98A94A41D111AF200252A39 /* MilboxTouch.framework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -44,9 +41,6 @@
 		A98A948F1D11134B00252A39 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		A98A94911D11134B00252A39 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A98A94981D1113AA00252A39 /* 04.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; path = 04.mp4; sourceTree = "<group>"; };
-		A98A949A1D1114D600252A39 /* cardboardOn.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardboardOn.png; sourceTree = "<group>"; };
-		A98A949C1D1114E300252A39 /* cardboardOff.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cardboardOff.png; sourceTree = "<group>"; };
-		A98A949E1D11150000252A39 /* arrows.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = arrows.png; sourceTree = "<group>"; };
 		A98A94A01D11150C00252A39 /* pause@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "pause@3x.png"; sourceTree = "<group>"; };
 		A98A94A21D11151100252A39 /* play@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "play@3x.png"; sourceTree = "<group>"; };
 		A98A94A41D111AF200252A39 /* MilboxTouch.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MilboxTouch.framework; path = "../../../../Library/Developer/Xcode/DerivedData/MilboxTouch-euhgmbovxbnavyhgmqirdkwwpfko/Build/Products/Debug-iphoneos/MilboxTouch.framework"; sourceTree = "<group>"; };
@@ -100,9 +94,6 @@
 			children = (
 				A98A94A21D11151100252A39 /* play@3x.png */,
 				A98A94A01D11150C00252A39 /* pause@3x.png */,
-				A98A949E1D11150000252A39 /* arrows.png */,
-				A98A949C1D1114E300252A39 /* cardboardOff.png */,
-				A98A949A1D1114D600252A39 /* cardboardOn.png */,
 				A98A94981D1113AA00252A39 /* 04.mp4 */,
 			);
 			name = Movie;
@@ -170,12 +161,9 @@
 			files = (
 				A98A94A11D11150C00252A39 /* pause@3x.png in Resources */,
 				A98A94901D11134B00252A39 /* LaunchScreen.storyboard in Resources */,
-				A98A949B1D1114D600252A39 /* cardboardOn.png in Resources */,
 				A98A94991D1113AA00252A39 /* 04.mp4 in Resources */,
-				A98A949F1D11150000252A39 /* arrows.png in Resources */,
 				A98A94A31D11151100252A39 /* play@3x.png in Resources */,
 				A98A948D1D11134B00252A39 /* Assets.xcassets in Resources */,
-				A98A949D1D1114E300252A39 /* cardboardOff.png in Resources */,
 				A98A948B1D11134B00252A39 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

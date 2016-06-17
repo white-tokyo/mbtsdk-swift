@@ -17,17 +17,13 @@ import CoreGraphics
 import MilboxTouch
 
 // ViewController
-class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureRecognizerDelegate {
+class ViewController: MBTViewController, SCNSceneRendererDelegate {
     
     @IBOutlet weak var leftSceneView                : SCNView!
     @IBOutlet weak var rightSceneView               : SCNView!
     
-    @IBOutlet weak var playerSlideBar               : UISlider!
-    
     @IBOutlet weak var heightSceneConstraint        : NSLayoutConstraint!
     @IBOutlet weak var widthSceneConstraint         : NSLayoutConstraint!
-    
-    @IBOutlet weak var orientationButton            : UIButton!
     
     var scenes                                      : [SCNScene]!
     
@@ -39,8 +35,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
     var camerasPitchNode                            : [SCNNode]!
     var camerasYawNode                              : [SCNNode]!
     
-    var recognizer                                  : UITapGestureRecognizer?
-    var panRecognizer                               : UIPanGestureRecognizer?
     var motionManager                               : CMMotionManager?
     
     var player                                      : AVPlayer!
@@ -48,15 +42,8 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
     var currentAngleX                               : Float!
     var currentAngleY                               : Float!
     
-    var oldY                                        : Float!
-    var oldX                                        : Float!
-    
-    var progressObserver                            : AnyObject?
-    
     var playingVideo                                : Bool = false
     var activateStereoscopicVideo                   : Bool = false
-    var hiddenButton                                : Bool = false
-    var cardboardViewOn                             : Bool = true
     
     #if arch(arm64)
     var PROCESSOR_64BITS                            : Bool = true
@@ -68,9 +55,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
-        leftSceneView?.backgroundColor              = UIColor.blackColor()
-        rightSceneView?.backgroundColor             = UIColor.blackColor()
         
         leftSceneView.delegate                      = self
         rightSceneView.delegate                     = self
@@ -139,8 +123,8 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
             rightSceneView?.scene                   = scene1
         }
         
-        leftCameraNode.position                     = SCNVector3(x: camX - ((true == activateStereoscopicVideo) ? 0.0 : 0.5), y: camY, z: camZ)
-        rightCameraNode.position                    = SCNVector3(x: camX + ((true == activateStereoscopicVideo) ? 0.0 : 0.5), y: camY, z: camZ)
+        leftCameraNode.position                     = SCNVector3(x: camX - (activateStereoscopicVideo ? 0.0 : 0.5), y: camY, z: camZ)
+        rightCameraNode.position                    = SCNVector3(x: camX + (activateStereoscopicVideo ? 0.0 : 0.5), y: camY, z: camZ)
         
         let camerasNodeAngles                       = getCamerasNodeAngle()
         
@@ -169,16 +153,13 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
         motionManager?.deviceMotionUpdateInterval   = 1.0 / 60.0
         motionManager?.startDeviceMotionUpdatesUsingReferenceFrame(CMAttitudeReferenceFrame.XArbitraryZVertical)
         
-        //Initialize position variable (for the panGesture)
+        //Initialize position variable
         currentAngleX                               = 0
         currentAngleY                               = 0
         
-        oldX                                        = 0
-        oldY                                        = 0
-        
         //Launch the player
         play()
-        m_togglePlayPause()
+        m_pause()
         
     }
     
@@ -186,9 +167,10 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
     override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         let camerasNodeAngles                       = getCamerasNodeAngle()
         
-        widthSceneConstraint?.active                = (.Portrait != toInterfaceOrientation && .PortraitUpsideDown != toInterfaceOrientation)
-        heightSceneConstraint?.active               = (.Portrait == toInterfaceOrientation || .PortraitUpsideDown == toInterfaceOrientation)
+//        widthSceneConstraint?.active                = (.Portrait != toInterfaceOrientation && .PortraitUpsideDown != toInterfaceOrientation)
+//        heightSceneConstraint?.active               = (.Portrait == toInterfaceOrientation || .PortraitUpsideDown == toInterfaceOrientation)
         
+        //なんかポーズしても勝手に再生される・・・！！！！！！！！！！！
         for cameraNode in camerasNode {
             cameraNode.eulerAngles                  = SCNVector3Make(Float(camerasNodeAngles[0]), Float(camerasNodeAngles[1]), Float(camerasNodeAngles[2]))
         }
@@ -214,13 +196,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
         
     }
     
-    @IBAction func backToCenter(){
-        
-        currentAngleX = 0
-        currentAngleY = 0
-        
-    }
-    
     //MARK: Video Player
     func play(){
         
@@ -228,14 +203,14 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
         
         let fileURL: NSURL? = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource(videoName, ofType: "mp4")!)
         
-        if (fileURL != nil){
+        if let fileURL = fileURL{
             
             var screenScale : CGFloat                                       = 1.0
             if PROCESSOR_64BITS {
                 screenScale                                                 = CGFloat(3.0)
             }
             
-            player                                                          = AVPlayer(URL: fileURL!)
+            player                                                          = AVPlayer(URL: fileURL)
             let videoSpriteKitNodeLeft                                      = SKVideoNode(AVPlayer: player)
             let videoNodeLeft                                               = SCNNode()
             let spriteKitScene1                                             = SKScene(size: CGSize(width: 1280 * screenScale, height: 1280 * screenScale))
@@ -313,45 +288,42 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
                     scene.rootNode.addChildNode(videoNode)
                 }
             }
-            
-            progressObserver = player.addPeriodicTimeObserverForInterval(CMTimeMakeWithSeconds(0.1, Int32(NSEC_PER_SEC)),
-                                                                         queue: nil,
-                                                                         usingBlock: { [unowned self] (time) -> Void in
-                                                                            self.updateSliderProgression()
-                }
-            )
-            
-            m_togglePlayPause()
         }
     }
     
     func m_togglePlayPause() {
-        for videoSpriteKitNode in videosSpriteKitNode {
-            if playingVideo {
-                
-                NSLog("ポース")
-                videoSpriteKitNode.pause()
-            } else {
-                NSLog("再開")
-                videoSpriteKitNode.play()
-            }
+        
+        if playingVideo {
+            m_pause()
+        } else {
+            m_play()
         }
-        playingVideo = !playingVideo
     }
-    override func onSetupCompleted() {
-        NSLog("初期化完了！！！！！！")
-        m_togglePlayPause()
-    }
-    override func onTap() {
-        if (hiddenButton){
-            playerSlideBar.hidden                                           = false
-            orientationButton.hidden                                        = false
-        }else {
-            playerSlideBar.hidden                                           = true
-            orientationButton.hidden                                        = true
+    func m_pause(){
+        NSLog("ポース")
+//        player.pause()
+        for videoSpriteKitNode in videosSpriteKitNode {
+            NSLog("現在ポーズ？\(videoSpriteKitNode.paused)")
+            videoSpriteKitNode.pause()
         }
         
-        hiddenButton = !hiddenButton
+        playingVideo = false
+    }
+    func m_play() {
+        NSLog("再開")
+//        player.play()
+        for videoSpriteKitNode in videosSpriteKitNode {
+            NSLog("現在ポーズ？\(videoSpriteKitNode.paused)")
+            videoSpriteKitNode.play()
+        }
+        playingVideo = true
+    }
+    
+    override func onSetupCompleted() {
+        NSLog("初期化完了！！！！！！")
+    }
+    
+    override func onTap() {
         m_togglePlayPause()
     }
     
@@ -387,71 +359,12 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
         }
     }
     
-    //MARK: Slider
-    private func updateSliderProgression() {
-        
-        let playerDuration = self.playerItemDuration()
-        if CMTIME_IS_INVALID(playerDuration) {
-            playerSlideBar.minimumValue                                     = 0.0
-            return;
-        }
-        
-        let duration = Float(CMTimeGetSeconds(playerDuration))
-        if isfinite(duration) && (duration > 0) {
-            let minValue                                                    = playerSlideBar.minimumValue
-            let maxValue                                                    = playerSlideBar.maximumValue
-            let time                                                        = Float(CMTimeGetSeconds(player.currentTime()))
-            
-            playerSlideBar.value                                            = (maxValue - minValue) * time / duration + minValue
-        }
-        
-    }
-    
-    private func playerItemDuration() -> CMTime {
-        
-        let thePlayerItem = player.currentItem
-        
-        if AVPlayerItemStatus.ReadyToPlay == thePlayerItem?.status {
-            return thePlayerItem?.duration ?? kCMTimeInvalid
-        }
-        
-        return kCMTimeInvalid
-        
-    }
-    
-    @IBAction func sliderChangeProgression(sender: UISlider) {
-        
-        let playerDuration = self.playerItemDuration()
-        
-        if CMTIME_IS_INVALID(playerDuration) {
-            return;
-        }
-        
-        let duration = Float(CMTimeGetSeconds(playerDuration))
-        if isfinite(duration) && (duration > 0) {
-            print(duration,Float64(duration) * Float64(playerSlideBar.value))//ここから、スライダは０−１、スクロールを秒数で前後する。
-//            let a = Int32(NSEC_PER_SEC)
-            player.seekToTime(CMTimeMakeWithSeconds(Float64(duration) * Float64(playerSlideBar.value), 60000))
-            m_togglePlayPause()
-        }
-        
-    }
     override func onScroll(rad: CGFloat) {
         NSLog("スクロール:\(rad)")
         
         var currentTime:Float64 = CMTimeGetSeconds(player.currentTime())
         currentTime += Float64(rad)
         player.seekToTime(CMTimeMakeWithSeconds(currentTime,Int32(NSEC_PER_SEC)), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
-    }
-    
-    @IBAction func sliderStartSliding(sender: AnyObject) {
-        
-        for videoSpriteKitNode in videosSpriteKitNode {
-            videoSpriteKitNode.pause()
-        }
-        
-        playingVideo = false
-        
     }
     
     override func viewDidLayoutSubviews() {
@@ -468,10 +381,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
         
         motionManager?.stopDeviceMotionUpdates()
         motionManager = nil
-        
-        if let observer = progressObserver {
-            player.removeTimeObserver(observer)
-        }
         
         playingVideo = false
         
@@ -501,12 +410,6 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate, UIGestureReco
     
     override func didReceiveMemoryWarning()
     {
-        
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-        
-    }
-    func gestureRecognizer(gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWithGestureRecognizer otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-        return true
     }
 }
