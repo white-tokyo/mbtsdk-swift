@@ -8,14 +8,14 @@
 
 /* Begin PBXBuildFile section */
 		A94E69BE1D0E3B420046E20E /* MilboxTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = A94E69BD1D0E3B420046E20E /* MilboxTouch.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		A94E69EE1D0E3F010046E20E /* MBTViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94E69ED1D0E3F010046E20E /* MBTViewController.swift */; };
+		A94E69EE1D0E3F010046E20E /* MBTViewControllerBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94E69ED1D0E3F010046E20E /* MBTViewControllerBase.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		A94E69BA1D0E3B420046E20E /* MilboxTouch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MilboxTouch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A94E69BD1D0E3B420046E20E /* MilboxTouch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MilboxTouch.h; sourceTree = "<group>"; };
 		A94E69BF1D0E3B420046E20E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		A94E69ED1D0E3F010046E20E /* MBTViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBTViewController.swift; sourceTree = "<group>"; };
+		A94E69ED1D0E3F010046E20E /* MBTViewControllerBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MBTViewControllerBase.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,7 +50,7 @@
 			children = (
 				A94E69BD1D0E3B420046E20E /* MilboxTouch.h */,
 				A94E69BF1D0E3B420046E20E /* Info.plist */,
-				A94E69ED1D0E3F010046E20E /* MBTViewController.swift */,
+				A94E69ED1D0E3F010046E20E /* MBTViewControllerBase.swift */,
 			);
 			path = MilboxTouch;
 			sourceTree = "<group>";
@@ -134,7 +134,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A94E69EE1D0E3F010046E20E /* MBTViewController.swift in Sources */,
+				A94E69EE1D0E3F010046E20E /* MBTViewControllerBase.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -236,6 +236,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -254,6 +255,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;

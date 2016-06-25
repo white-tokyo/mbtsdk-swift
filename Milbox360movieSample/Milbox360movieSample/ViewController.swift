@@ -17,7 +17,7 @@ import CoreGraphics
 import MilboxTouch
 
 // ViewController
-class ViewController: MBTViewController, SCNSceneRendererDelegate {
+class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     @IBOutlet weak var leftSceneView                : SCNView!
     @IBOutlet weak var rightSceneView               : SCNView!
@@ -59,16 +59,10 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
         leftSceneView.delegate                      = self
         rightSceneView.delegate                     = self
         
-        let camX                                    = 0.0 as Float
-        let camY                                    = 0.0 as Float
-        let camZ                                    = 0.0 as Float
-        let zFar                                    = 50.0
-        
         let leftCamera                              = SCNCamera()
         let rightCamera                             = SCNCamera()
-        
-        leftCamera.zFar                             = zFar
-        rightCamera.zFar                            = zFar
+        leftCamera.zFar                             = 50.0
+        rightCamera.zFar                            = 50.0
         
         let leftCameraNode                          = SCNNode()
         leftCameraNode.camera                       = leftCamera
@@ -123,13 +117,13 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
             rightSceneView?.scene                   = scene1
         }
         
-        leftCameraNode.position                     = SCNVector3(x: camX - (activateStereoscopicVideo ? 0.0 : 0.5), y: camY, z: camZ)
-        rightCameraNode.position                    = SCNVector3(x: camX + (activateStereoscopicVideo ? 0.0 : 0.5), y: camY, z: camZ)
+        leftCameraNode.position                     = SCNVector3(x: 0 - (activateStereoscopicVideo ? 0.0 : 0.5), y: 0, z: 0)
+        rightCameraNode.position                    = SCNVector3(x: 0 + (activateStereoscopicVideo ? 0.0 : 0.5), y: 0, z: 0)
         
         let camerasNodeAngles                       = getCamerasNodeAngle()
         
         for cameraNode in camerasNode {
-            cameraNode.position                     = SCNVector3(x: camX, y:camY, z:camZ)
+            cameraNode.position                     = SCNVector3(x: 0, y:0, z:0)
             cameraNode.eulerAngles                  = SCNVector3Make(Float(camerasNodeAngles[0]), Float(camerasNodeAngles[1]), Float(camerasNodeAngles[2]))
         }
         
@@ -197,7 +191,7 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
     
     //MARK: Video Player
     func play(){
-        
+        NSLog("プレイ")
         let videoName = "04"
         
         let fileURL: NSURL? = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource(videoName, ofType: "mp4")!)
@@ -216,7 +210,8 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
             spriteKitScene1.shouldRasterize                                 = true
             var spriteKitScenes                                             = [spriteKitScene1]
             
-            videoNodeLeft.geometry                                          = SCNSphere(radius: 30)
+//            videoNodeLeft.geometry                                          = SCNSphere(radius: 30)
+            videoNodeLeft.geometry = SCNPlane(width: 20, height: 20)
             spriteKitScene1.scaleMode                                       = .AspectFit
             videoSpriteKitNodeLeft.position                                 = CGPoint(x: spriteKitScene1.size.width / 2.0, y: spriteKitScene1.size.height / 2.0)
             videoSpriteKitNodeLeft.size                                     = spriteKitScene1.size
@@ -281,8 +276,7 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
                     videoNode.pivot                                                 = SCNMatrix4MakeRotation(Float(M_PI_2), 0.0, -1.0, 0.0)
                     videoNode.geometry?.firstMaterial?.diffuse.contentsTransform    = transform
                     
-                    videoNode.position                                              = SCNVector3(x: 0, y: 0, z: 0)
-                    videoNode.position                                              = SCNVector3(x: 0, y: 0, z: 0)
+                    videoNode.position                                              = SCNVector3(x: 10, y: 0, z: 0)//x:0
                     
                     scene.rootNode.addChildNode(videoNode)
                 }
@@ -298,6 +292,7 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
             m_play()
         }
     }
+    
     func m_pause(){
         NSLog("ポース")
 //        player.pause()
@@ -307,6 +302,7 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
         
         playingVideo = false
     }
+    
     func m_play() {
         NSLog("再開")
 //        player.play()
@@ -372,6 +368,7 @@ class ViewController: MBTViewController, SCNSceneRendererDelegate {
         widthSceneConstraint?.constant = width / 2.0
         heightSceneConstraint?.constant = width / 2.0
     }
+    
     
     //MARK: Clean perf
     deinit {

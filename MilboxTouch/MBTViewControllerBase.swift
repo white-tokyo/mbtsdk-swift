@@ -10,7 +10,7 @@ import Foundation
 import UIKit
 
 
-public class MBTViewController: UIViewController {
+public class MBTViewControllerBase: UIViewController {
     
     /// ヘルパーのセットアップが完了しているか
     var setupState: MBTViewControllerState {
@@ -19,8 +19,7 @@ public class MBTViewController: UIViewController {
         }
         return .Ready
     }
-    var setupStageCount = 5
-    var setupAllowableSpan: CGFloat = 10
+    var setupStageCount = 50
     
     // イベントを検知する誤差範囲パラメータ
     var tapDetectSpan: CGFloat = 1
@@ -29,8 +28,8 @@ public class MBTViewController: UIViewController {
     var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
     var swipeDetectSpan: CGFloat = 50
     
-    private var currentSetupStageCount = 0
-    private var setupStageAllowed = false
+//    private var currentSetupStageCount = 0
+//    private var setupStageAllowed = false
     
     private var leftLimit: CGFloat = 0
     private var rightLimit: CGFloat = 0
@@ -44,7 +43,6 @@ public class MBTViewController: UIViewController {
         if state is MBTSetupState {
             let ss = MBTSetupState()
             ss.stageLimit = setupStageCount
-            ss.setupAllowableSpan = setupAllowableSpan
             ss.isSettingUp = true
             state = ss
         }
@@ -52,14 +50,15 @@ public class MBTViewController: UIViewController {
     public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.locationInView(self.view).y
-            NSLog("began position:\(position)")
-            state.touchBegan(position)
+            NSLog("began rad:\(positionToAngle(position))")
+            state.touchBegan(positionToAngle(position))
         }
     }
     public override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.locationInView(self.view).y
-            state.touchMoved(position)
+            NSLog("move rad:\(positionToAngle(position))")
+            state.touchMoved(positionToAngle(position))
             if let detectState = state as? MBTDetectState {
                 if let delta = detectState.checkScroll() {
                     onScroll(delta)
@@ -68,14 +67,14 @@ public class MBTViewController: UIViewController {
         }
     }
     public override func touchesEnded(touches: Set<UITouch>, withEvent event: UIEvent?) {
-                NSLog("ended")
+//        NSLog("ended")
         if let touch = touches.first {
             let endPosition = touch.locationInView(self.view).y
-            state.touchEnded(endPosition)
+            state.touchEnded(positionToAngle(endPosition))
             
             if let setupState = state as? MBTSetupState {
                 if setupState.setupCompleted {
-                    NSLog("セットアップ完了")
+                    NSLog("setup completed.")
                     leftLimit = setupState.leftLimit
                     rightLimit = setupState.rightLimit
                     onSetupCompleted()
@@ -93,6 +92,22 @@ public class MBTViewController: UIViewController {
             
         }
     }
+    
+    
+    func positionToAngle(position: CGFloat) -> CGFloat {
+        if setupState != .Ready {
+            return position
+        }
+        let dir = position - leftLimit
+        let limitSpan = rightLimit - leftLimit
+        let rate = dir / limitSpan
+        let pi = CGFloat(M_PI)
+        let correction: CGFloat = 140
+        let angle = rate * 360 + correction
+        return angle >= 360 ? angle - 360 : angle
+        
+    }
+    
     
     public func onTap() {
         NSLog("ontap")
@@ -118,20 +133,22 @@ public class MBTViewController: UIViewController {
 }
 
 class MBTState {
-    func touchBegan(position: CGFloat) {
+    func touchBegan(anglePosition: CGFloat) {
         NSLog("Override me !")
     }
-    func touchMoved(position: CGFloat) {
+    func touchMoved(anglePosition: CGFloat) {
         NSLog("Override me !")
     }
-    func touchEnded(position: CGFloat) {
+    func touchEnded(anglePosition: CGFloat) {
         NSLog("Override me !")
     }
 }
 
 class MBTSetupState: MBTState {
-    var stageLimit: Int = 5
-    var currentStageCount: Int = 0
+    var stageLimit: Int = 50
+    var torrelance: CGFloat = 5
+    var rightLimitHistory: [CGFloat] = []
+    var leftLimitHistory: [CGFloat] = []
     var isSettingUp: Bool = false {
         didSet {
             if oldValue && !isSettingUp {//trueからfalseへの変更拒否
@@ -139,68 +156,57 @@ class MBTSetupState: MBTState {
                 return
             }
             if isSettingUp && !oldValue {
-                NSLog("初期化開始")
-                currentStageCount = 0
-                stageAllowed = false
-                stageStarted = false
+                NSLog("start initialize...")
+                leftLimitHistory = []
+                rightLimitHistory = []
             }
         }
     }
-    var stageAllowed = false
-    var setupAllowableSpan: CGFloat = 10
     var leftLimit: CGFloat = 0
     var rightLimit: CGFloat = 0
-    var stageStarted = false
     var setupCompleted: Bool {
-        return stageLimit <= currentStageCount
+        if rightLimitHistory.count != stageLimit {
+            return false
+        }
+        
+        if let max = rightLimitHistory.maxElement(),let min = rightLimitHistory.minElement() {
+//            NSLog("\nright-max: \(max)\nright-min: \(min)")
+            if max - min > torrelance {
+                NSLog("rightLimit is changing")
+                return false
+            }
+        }
+        if let max = leftLimitHistory.maxElement(),let min = leftLimitHistory.minElement() {
+//            NSLog("\nleft-max: \(max)\nleft-min: \(min)")
+            if max - min > torrelance {
+                NSLog("leftLimit is changing")
+                return false
+            }
+        }
+        return true
     }
-    
-    override func touchBegan(position: CGFloat){
-        if !isSettingUp{
-            isSettingUp = true
+    private func appendHistory(right: CGFloat, left: CGFloat) {
+//        NSLog("append")
+        rightLimitHistory.append(right)
+        leftLimitHistory.append(left)
+        
+        if rightLimitHistory.count > stageLimit {
+//            NSLog("limit!!!!")
+            rightLimitHistory.removeFirst()
         }
-        if stageStarted {
-//            NSLog("開始と終了は交互に呼ぶ")
-            return
+        if leftLimitHistory.count > stageLimit {
+            leftLimitHistory.removeFirst()
         }
-        stageStarted = true
-        if currentStageCount == 0 {
-            leftLimit = position
-            rightLimit = position
-            NSLog("ステージ0開始")
-            return
-        }
-        stageAllowed = fabs(leftLimit - position) < setupAllowableSpan || fabs(rightLimit - position) < setupAllowableSpan
     }
-    override func touchEnded(position: CGFloat){
-        if !isSettingUp{
-            isSettingUp = true
-            return
-        }
-        if !stageStarted {
-//            NSLog("開始と終了は交互に呼ぶ")
-            return
-        }
-        stageStarted = false
-        if currentStageCount == 0 {
-            leftLimit = min(position, leftLimit)
-            rightLimit = max(position, rightLimit)
-            currentStageCount = 1
-            NSLog("ステージ０完了")
-            return
-        }
-        if !stageAllowed {//やり直し
-            NSLog("ステージ\(currentStageCount)の開始ポイント誤差あり。やり直し")
-            currentStageCount = 0
-            return
-        }
-        if fabs(leftLimit - position) < setupAllowableSpan || fabs(rightLimit - position) < setupAllowableSpan {
-            NSLog("ステージ\(currentStageCount)完了")
-            currentStageCount += 1
-        }else{
-            NSLog("ステージ\(currentStageCount)の終了ポイント誤差あり。やり直し")
-            currentStageCount = 0
-        }
+    override func touchMoved(anglePosition: CGFloat) {
+        leftLimit = leftLimit == 0 ? anglePosition : min(anglePosition, leftLimit)
+        rightLimit = rightLimit == 0 ? anglePosition : max(anglePosition, rightLimit)
+        appendHistory(rightLimit, left: leftLimit)
+        NSLog("\nright: \(rightLimit)\nleft: \(leftLimit)")
+    }
+    override func touchBegan(anglePosition: CGFloat){
+    }
+    override func touchEnded(anglePosition: CGFloat){
     }
     
 }
@@ -212,7 +218,7 @@ class MBTDetectState: MBTState {
     var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
     
     var tapStartTime: NSDate = NSDate()
-    var tapStartPosition: CGFloat = 0
+    var tapStartAnglePosition: CGFloat = 0
     var lastMovePosition: CGFloat = 0
     var moveDelta: CGFloat = 0
     var lastTap:Tap?
@@ -220,23 +226,23 @@ class MBTDetectState: MBTState {
     private var isTap: Bool = false
     private var swipe: Swipe?
     
-    override func touchBegan(position:CGFloat) {
+    override func touchBegan(anglePosition:CGFloat) {
 //        NSLog("DetectStateタップ開始")
         tapStartTime = NSDate()
-        tapStartPosition = position
-        lastMovePosition = tapStartPosition
+        tapStartAnglePosition = anglePosition
+        lastMovePosition = tapStartAnglePosition
     }
-    override func touchMoved(position: CGFloat){
+    override func touchMoved(anglePosition: CGFloat){
 //        NSLog("detectState移動")
-        moveDelta = position - lastMovePosition
-        lastMovePosition = position
+        moveDelta = anglePosition - lastMovePosition
+        lastMovePosition = anglePosition
     }
-    override func touchEnded(position: CGFloat){
+    override func touchEnded(anglePosition: CGFloat){
 //        NSLog("detectState終了")
         let currentTime = NSDate()
         let tappingTime = currentTime.timeIntervalSinceDate(tapStartTime)
-        if touchIsTap(position, tappingTimeSpan: tappingTime) {
-            let currentTap = Tap(position: position, time: currentTime)
+        if touchIsTap(anglePosition, tappingTimeSpan: tappingTime) {
+            let currentTap = Tap(position: anglePosition, time: currentTime)
             if lastTap?.isDoubleTap(currentTap, detectSpan: doubleTapDetectSpan, detectTimeSpan: doubleTapDetectTimeSpan) ?? false {
                 NSLog("ダブルタップ")
                 isDoubleTap = true
@@ -246,14 +252,13 @@ class MBTDetectState: MBTState {
                 isTap = true
                 lastTap = currentTap
             }
-        }else if toucheIsSwipe(position, tappingTimeSpan: tappingTime) {
+        }else if toucheIsSwipe(anglePosition, tappingTimeSpan: tappingTime) {
             NSLog("スワイプ検知:")
-            let sp = tapStartPosition
-            let ep = position
-            swipe = Swipe(startPosition: sp, endPosition: ep, timeSpan: tappingTime)
+            let sp = tapStartAnglePosition
+            let ep = anglePosition
+            swipe = Swipe(startAnglePosition: sp, endAnglePosition: ep, timeSpan: tappingTime)
         }
     }
-    
     
     func checkScroll() -> CGFloat? {
         if fabs(moveDelta) > tapDetectSpan {
@@ -279,13 +284,13 @@ class MBTDetectState: MBTState {
         return nil
     }
     
-    private func touchIsTap(position: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
-        let spanCheck = fabs(tapStartPosition - position) < tapDetectSpan
+    private func touchIsTap(anglePosition: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
+        let spanCheck = fabs(tapStartAnglePosition - anglePosition) < tapDetectSpan
         let timeCheck = tappingTimeSpan < tapDetectTimeSpan
         return spanCheck && timeCheck
     }
-    private func toucheIsSwipe(position: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
-        let spanCheck = fabs(tapStartPosition - position) > tapDetectSpan
+    private func toucheIsSwipe(anglePosition: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
+        let spanCheck = fabs(tapStartAnglePosition - anglePosition) > tapDetectSpan
         let timeCheck = tappingTimeSpan < tapDetectTimeSpan
         return spanCheck && timeCheck
     }
@@ -305,23 +310,70 @@ class Tap {
     }
 }
 class Swipe {
-    var startPosition: CGFloat
-    var endPosition: CGFloat
+    var startAnglePosition: CGFloat
+    var endAnglePosition: CGFloat
     var timeSpan: NSTimeInterval
     
     var speed:CGFloat {
-        let dist = endPosition-startPosition
+        let dist = endAnglePosition-startAnglePosition
         let dt = CGFloat(timeSpan)
         return dist / dt
     }
     var direction: SwipeDirection {
-        return startPosition > endPosition ? .Right : .Left
+        let s = checkAngleBlock(startAnglePosition)
+        let e = checkAngleBlock(endAnglePosition)
+        switch s {
+        case .UpperLeft:
+            if e == .UpperRight {
+                return .Right
+            }else if e == .LowerLeft {
+                return .Down
+            }
+        case .UpperRight:
+            if e == .UpperLeft {
+                return .Left
+            }else if e == .LowerRight {
+                return .Down
+            }
+        case .LowerLeft:
+            if e == .UpperLeft {
+                return .Up
+            }else if e == .LowerRight {
+                return .Right
+            }
+        case .LowerRight: 
+            if e == .UpperRight {
+                return .Up
+            }else if e == .LowerLeft {
+                return .Left
+            }
+        }
+        return startAnglePosition > endAnglePosition ? .Right : .Left
     }
     
-    init(startPosition:CGFloat,endPosition:CGFloat,timeSpan:NSTimeInterval) {
-        self.startPosition = startPosition
-        self.endPosition = endPosition
+    init(startAnglePosition:CGFloat,endAnglePosition:CGFloat,timeSpan:NSTimeInterval) {
+        self.startAnglePosition = startAnglePosition
+        self.endAnglePosition = endAnglePosition
         self.timeSpan = timeSpan
+        NSLog("swipe:::\ns: \(startAnglePosition)\ns: \(endAnglePosition)")
+    }
+    
+    func checkAngleBlock(angle: CGFloat) -> AngleBlock {
+        if 0 <= angle && angle < 90 {
+            return .UpperRight
+        }else if 90 <= angle && angle < 180 {
+            return .UpperLeft
+        }else if 180 <= angle && angle < 270 {
+            return .LowerLeft
+        }
+        return .LowerRight
+    }
+    
+    enum AngleBlock{
+        case UpperLeft
+        case UpperRight
+        case LowerLeft
+        case LowerRight
     }
     
 }

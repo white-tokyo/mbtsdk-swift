@@ -11,7 +11,7 @@ import QuartzCore
 import SceneKit
 import MilboxTouch
 
-class GameViewController: MBTViewController {
+class GameViewController: MBTViewControllerBase {
     var textView: SCNText?
     
     override func viewDidLoad() {
@@ -88,9 +88,11 @@ class GameViewController: MBTViewController {
     }
     override func onScroll(rad: CGFloat) {
         textView?.string = "スクロール（\(rad)度）"
+        NSLog("スクロール（\(rad)度）")
     }
     override func onSwipe(speed: CGFloat, direction: SwipeDirection) {
         textView?.string = "スワイプ:（\(speed),dir:\(direction.rawValue)）"
+        NSLog("スワイプ:（\(speed),dir:\(direction.rawValue)）")
     }
     
 }
