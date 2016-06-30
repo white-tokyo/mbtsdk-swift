@@ -43,7 +43,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     var currentAngleY                               : Float!
     
     var playingVideo                                : Bool = false
-    var activateStereoscopicVideo                   : Bool = false
+    var activateStereoscopicVideo                   : Bool = true
     
     #if arch(arm64)
     var PROCESSOR_64BITS                            : Bool = true
@@ -210,8 +210,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
             spriteKitScene1.shouldRasterize                                 = true
             var spriteKitScenes                                             = [spriteKitScene1]
             
-//            videoNodeLeft.geometry                                          = SCNSphere(radius: 30)
-            videoNodeLeft.geometry = SCNPlane(width: 20, height: 20)
+            videoNodeLeft.geometry                                          = SCNSphere(radius: 30)
             spriteKitScene1.scaleMode                                       = .AspectFit
             videoSpriteKitNodeLeft.position                                 = CGPoint(x: spriteKitScene1.size.width / 2.0, y: spriteKitScene1.size.height / 2.0)
             videoSpriteKitNodeLeft.size                                     = spriteKitScene1.size
@@ -234,24 +233,26 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
                 let mask                                                    = SKShapeNode(rect: CGRectMake(0, 0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
                 mask.fillColor                                              = SKColor.blackColor()
                 
-                let cropNode                                                = SKCropNode()
-                cropNode.maskNode                                           = mask
-                
-                cropNode.addChild(videoSpriteKitNodeLeft)
-                cropNode.yScale                                             = 2
-                cropNode.position                                           = CGPoint(x: 0, y: 0)
-                
-                let mask2                                                   = SKShapeNode(rect: CGRectMake(0, spriteKitScene1.size.width / 2.0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
-                mask2.fillColor                                             = SKColor.blackColor()
-                let cropNode2                                               = SKCropNode()
-                cropNode2.maskNode                                          = mask2
-                
-                cropNode2.addChild(videoSpriteKitNodeRight)
-                cropNode2.yScale                                            = 2
-                cropNode2.position                                          = CGPoint(x: 0, y: -spriteKitScene1.size.width)
-                
-                spriteKitScene1.addChild(cropNode2)
-                spriteKitScene2.addChild(cropNode)
+//                let cropNode                                                = SKCropNode()
+//                cropNode.maskNode                                           = mask
+//                
+//                cropNode.addChild(videoSpriteKitNodeLeft)
+//                cropNode.yScale                                             = 2
+//                cropNode.position                                           = CGPoint(x: 0, y: 0)
+//                
+//                let mask2                                                   = SKShapeNode(rect: CGRectMake(0, spriteKitScene1.size.width / 2.0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
+//                mask2.fillColor                                             = SKColor.blackColor()
+//                let cropNode2                                               = SKCropNode()
+//                cropNode2.maskNode                                          = mask2
+//                
+//                cropNode2.addChild(videoSpriteKitNodeRight)
+//                cropNode2.yScale                                            = 2
+//                cropNode2.position                                          = CGPoint(x: 0, y: -spriteKitScene1.size.width)
+//                
+//                spriteKitScene1.addChild(cropNode2)
+//                spriteKitScene2.addChild(cropNode)
+                spriteKitScene1.addChild(videoSpriteKitNodeLeft)
+                spriteKitScene2.addChild(videoSpriteKitNodeRight)
                 
             } else {
                 videosSpriteKitNode                                         = [videoSpriteKitNodeLeft]
@@ -276,7 +277,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
                     videoNode.pivot                                                 = SCNMatrix4MakeRotation(Float(M_PI_2), 0.0, -1.0, 0.0)
                     videoNode.geometry?.firstMaterial?.diffuse.contentsTransform    = transform
                     
-                    videoNode.position                                              = SCNVector3(x: 10, y: 0, z: 0)//x:0
+                    videoNode.position                                              = SCNVector3(x: 0, y: 0, z: 0)
                     
                     scene.rootNode.addChildNode(videoNode)
                 }
@@ -323,6 +324,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     //MARK: Render the scene
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval){
+        NSLog("render!")
         
         // Render the scene
         dispatch_async(dispatch_get_main_queue()) { [weak self] () -> Void in
@@ -331,6 +333,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
                     let currentAttitude                                     = motion.attitude
                     
                     var roll : Double                                       = currentAttitude.roll
+                    NSLog("roll:\(roll)")
                     
                     if(UIApplication.sharedApplication().statusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
                         roll                                                = -1.0 * (-M_PI - roll)
