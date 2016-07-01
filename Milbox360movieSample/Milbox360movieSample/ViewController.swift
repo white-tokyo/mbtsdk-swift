@@ -25,6 +25,9 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     @IBOutlet weak var heightSceneConstraint        : NSLayoutConstraint!
     @IBOutlet weak var widthSceneConstraint         : NSLayoutConstraint!
     
+    @IBOutlet weak var rightLabel: UILabel!
+    @IBOutlet weak var leftLabel: UILabel!
+    
     var scenes                                      : [SCNScene]!
     
     var videosNode                                  : [SCNNode]!
@@ -43,7 +46,6 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     var currentAngleY                               : Float!
     
     var playingVideo                                : Bool = false
-    var activateStereoscopicVideo                   : Bool = true
     
     #if arch(arm64)
     var PROCESSOR_64BITS                            : Bool = true
@@ -89,40 +91,32 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
         
         leftSceneView.scene                         = scene1
         
-        if true == activateStereoscopicVideo {
-            let scene2                              = SCNScene()
-            let cameraNodeRight                     = SCNNode()
-            let cameraRollNodeRight                 = SCNNode()
-            let cameraPitchNodeRight                = SCNNode()
-            let cameraYawNodeRight                  = SCNNode()
-            
-            scenes                                  = [scene1, scene2]
-            camerasNode                             = [cameraNodeLeft, cameraNodeRight]
-            camerasRollNode                         = [cameraRollNodeLeft, cameraRollNodeRight]
-            camerasPitchNode                        = [cameraPitchNodeLeft, cameraPitchNodeRight]
-            camerasYawNode                          = [cameraYawNodeLeft, cameraYawNodeRight]
-            
-            rightSceneView?.scene                   = scene2
-            leftCamera.xFov                         = 80
-            rightCamera.xFov                        = 80
-            leftCamera.yFov                         = 80
-            rightCamera.yFov                        = 80
-            
-            cameraNodeRight.addChildNode(rightCameraNode)
-            cameraRollNodeRight.addChildNode(cameraNodeRight)
-            cameraPitchNodeRight.addChildNode(cameraRollNodeRight)
-            cameraYawNodeRight.addChildNode(cameraPitchNodeRight)
-        } else {
-            scenes                                  = [scene1]
-            camerasNode                             = [cameraNodeLeft]
-            camerasRollNode                         = [cameraRollNodeLeft]
-            camerasPitchNode                        = [cameraPitchNodeLeft]
-            camerasYawNode                          = [cameraYawNodeLeft]
-            rightSceneView?.scene                   = scene1
-        }
+        let scene2                              = SCNScene()
+        let cameraNodeRight                     = SCNNode()
+        let cameraRollNodeRight                 = SCNNode()
+        let cameraPitchNodeRight                = SCNNode()
+        let cameraYawNodeRight                  = SCNNode()
         
-        leftCameraNode.position                     = SCNVector3(x: 0 - (activateStereoscopicVideo ? 0.0 : 0.5), y: 0, z: 0)
-        rightCameraNode.position                    = SCNVector3(x: 0 + (activateStereoscopicVideo ? 0.0 : 0.5), y: 0, z: 0)
+        scenes                                  = [scene1, scene2]
+        camerasNode                             = [cameraNodeLeft, cameraNodeRight]
+        camerasRollNode                         = [cameraRollNodeLeft, cameraRollNodeRight]
+        camerasPitchNode                        = [cameraPitchNodeLeft, cameraPitchNodeRight]
+        camerasYawNode                          = [cameraYawNodeLeft, cameraYawNodeRight]
+        
+        rightSceneView?.scene                   = scene2
+        leftCamera.xFov                         = 80
+        rightCamera.xFov                        = 80
+        leftCamera.yFov                         = 80
+        rightCamera.yFov                        = 80
+        
+        cameraNodeRight.addChildNode(rightCameraNode)
+        cameraRollNodeRight.addChildNode(cameraNodeRight)
+        cameraPitchNodeRight.addChildNode(cameraRollNodeRight)
+        cameraYawNodeRight.addChildNode(cameraPitchNodeRight)
+        
+        let distance:Float = 0.5
+        leftCameraNode.position                     = SCNVector3(x: 0 - distance, y: 0, z: 0)
+        rightCameraNode.position                    = SCNVector3(x: 0 + distance, y: 0, z: 0)
         
         let camerasNodeAngles                       = getCamerasNodeAngle()
         
@@ -158,6 +152,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
         //Launch the player
         play()
         m_pause()
+        showText("chargeing...")
         
     }
     
@@ -216,24 +211,23 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
             videoSpriteKitNodeLeft.position                                 = CGPoint(x: spriteKitScene1.size.width / 2.0, y: spriteKitScene1.size.height / 2.0)
             videoSpriteKitNodeLeft.size                                     = spriteKitScene1.size
             
-            if true == activateStereoscopicVideo {
-                let videoSpriteKitNodeRight                                 = SKVideoNode(AVPlayer: player)
-                let videoNodeRight                                          = SCNNode()
-                let spriteKitScene2                                         = SKScene(size: CGSize(width: 1280 * screenScale, height: 1280 * screenScale))
-                spriteKitScene2.shouldRasterize                             = true
-                
-                videosSpriteKitNode                                         = [videoSpriteKitNodeLeft, videoSpriteKitNodeRight]
-                videosNode                                                  = [videoNodeLeft, videoNodeRight]
-                spriteKitScenes                                             = [spriteKitScene1, spriteKitScene2]
-                
-                videoNodeRight.geometry                                     = SCNSphere(radius: 30)
-                spriteKitScene2.scaleMode                                   = .AspectFit
-                videoSpriteKitNodeRight.position                            = CGPoint(x: spriteKitScene1.size.width / 2.0, y: spriteKitScene1.size.height / 2.0)
-                videoSpriteKitNodeRight.size                                = spriteKitScene2.size
-                
-                let mask                                                    = SKShapeNode(rect: CGRectMake(0, 0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
-                mask.fillColor                                              = SKColor.blackColor()
-                
+            let videoSpriteKitNodeRight                                 = SKVideoNode(AVPlayer: player)
+            let videoNodeRight                                          = SCNNode()
+            let spriteKitScene2                                         = SKScene(size: CGSize(width: 1280 * screenScale, height: 1280 * screenScale))
+            spriteKitScene2.shouldRasterize                             = true
+            
+            videosSpriteKitNode                                         = [videoSpriteKitNodeLeft, videoSpriteKitNodeRight]
+            videosNode                                                  = [videoNodeLeft, videoNodeRight]
+            spriteKitScenes                                             = [spriteKitScene1, spriteKitScene2]
+            
+            videoNodeRight.geometry                                     = SCNSphere(radius: 30)
+            spriteKitScene2.scaleMode                                   = .AspectFit
+            videoSpriteKitNodeRight.position                            = CGPoint(x: spriteKitScene1.size.width / 2.0, y: spriteKitScene1.size.height / 2.0)
+            videoSpriteKitNodeRight.size                                = spriteKitScene2.size
+            
+            let mask                                                    = SKShapeNode(rect: CGRectMake(0, 0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
+            mask.fillColor                                              = SKColor.blackColor()
+            
 //                let cropNode                                                = SKCropNode()
 //                cropNode.maskNode                                           = mask
 //                
@@ -252,15 +246,8 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
 //                
 //                spriteKitScene1.addChild(cropNode2)
 //                spriteKitScene2.addChild(cropNode)
-                spriteKitScene1.addChild(videoSpriteKitNodeLeft)
-                spriteKitScene2.addChild(videoSpriteKitNodeRight)
-                
-            } else {
-                videosSpriteKitNode                                         = [videoSpriteKitNodeLeft]
-                videosNode                                                  = [videoNodeLeft]
-                
-                spriteKitScene1.addChild(videoSpriteKitNodeLeft)
-            }
+            spriteKitScene1.addChild(videoSpriteKitNodeLeft)
+            spriteKitScene2.addChild(videoSpriteKitNodeRight)
             
             if videosNode.count == spriteKitScenes.count && scenes.count == videosNode.count {
                 for i in 0 ..< videosNode.count {
@@ -297,6 +284,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     func m_pause(){
         NSLog("pause")
+        showText("pause...",duration: 1)
         for videoSpriteKitNode in videosSpriteKitNode {
             videoSpriteKitNode.pause()
         }
@@ -306,6 +294,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     func m_play() {
         NSLog("play")
+        showText("play!",duration: 1)
 //        player.play()
         for videoSpriteKitNode in videosSpriteKitNode {
             videoSpriteKitNode.play()
@@ -358,9 +347,11 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     var scrollRad:CGFloat = 0
     override func onScroll(rad: CGFloat) {
         NSLog("scroll:\(rad) total : \(scrollRad)")
+        showText("seek to \(scrollRad / 10.0) second ?")
         scrollRad += rad
     }
     override func onScrollFinish() {
+        showText("seek !")
         let seekTime = scrollRad / 10.0
         var currentTime:Float64 = CMTimeGetSeconds(player.currentTime())
 //        NSLog("seek time : \(seekTime) current :\(currentTime)")
@@ -379,6 +370,23 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
         
         widthSceneConstraint?.constant = width / 2.0
         heightSceneConstraint?.constant = width / 2.0
+    }
+    
+    func showText(message: String,duration: NSTimeInterval = 0) {
+        rightLabel.alpha = 1
+        leftLabel.alpha = 1
+        
+        rightLabel.text = message
+        leftLabel.text = message
+        
+        if duration == 0 {
+            return
+        }
+        
+        UIView.animateWithDuration(duration, animations: {
+                self.rightLabel.alpha = 0
+                self.leftLabel.alpha = 0
+            })
     }
     
     

@@ -21,6 +21,12 @@
                                 <rect key="frame" x="300" y="0.0" width="300" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </sceneKitView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PpG-dU-tmg">
+                                <rect key="frame" x="429" y="289.5" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                             <sceneKitView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" loops="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Js6-CC-VKa">
                                 <rect key="frame" x="0.0" y="0.0" width="300" height="600"/>
                                 <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
@@ -40,20 +46,30 @@
                                     </mask>
                                 </variation>
                             </sceneKitView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eIY-hk-kJj">
+                                <rect key="frame" x="129" y="289" width="42" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="136-Ea-60d"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JsU-yv-DqX" secondAttribute="bottom" id="6we-Dp-8cu"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="6ww-1V-zRn"/>
+                            <constraint firstItem="PpG-dU-tmg" firstAttribute="centerX" secondItem="JsU-yv-DqX" secondAttribute="centerX" id="7VX-Aa-Ohy"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="ABl-HP-njB"/>
                             <constraint firstAttribute="trailing" secondItem="JsU-yv-DqX" secondAttribute="trailing" id="D66-jC-Yau"/>
+                            <constraint firstItem="PpG-dU-tmg" firstAttribute="centerY" secondItem="JsU-yv-DqX" secondAttribute="centerY" id="DVf-d9-mzx"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="JsU-yv-DqX" secondAttribute="bottom" id="EdC-iA-1HM"/>
+                            <constraint firstItem="eIY-hk-kJj" firstAttribute="centerY" secondItem="Js6-CC-VKa" secondAttribute="centerY" id="MQ7-5K-qjg"/>
                             <constraint firstItem="wfy-db-euE" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="bottom" id="Qmp-oY-Isv"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="top" id="WhA-3p-JzE"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="leading" secondItem="Js6-CC-VKa" secondAttribute="trailing" id="aQg-06-ccl"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="abM-cA-7HT"/>
                             <constraint firstItem="Js6-CC-VKa" firstAttribute="leading" secondItem="8bC-Xf-vdC" secondAttribute="leading" id="dTT-GZ-R8b"/>
+                            <constraint firstItem="eIY-hk-kJj" firstAttribute="centerX" secondItem="Js6-CC-VKa" secondAttribute="centerX" id="ePT-1P-Zqo"/>
                             <constraint firstAttribute="trailing" secondItem="JsU-yv-DqX" secondAttribute="trailing" id="iBf-B5-Y1g"/>
                             <constraint firstItem="JsU-yv-DqX" firstAttribute="top" secondItem="Js6-CC-VKa" secondAttribute="bottom" id="kI0-VP-Es8"/>
                             <constraint firstAttribute="trailing" secondItem="Js6-CC-VKa" secondAttribute="trailing" id="kMM-1f-9wr"/>
@@ -93,7 +109,9 @@
                     </view>
                     <connections>
                         <outlet property="heightSceneConstraint" destination="ueM-nB-pXD" id="Gng-de-95o"/>
+                        <outlet property="leftLabel" destination="eIY-hk-kJj" id="F1X-zv-in5"/>
                         <outlet property="leftSceneView" destination="Js6-CC-VKa" id="p6K-GI-cb2"/>
+                        <outlet property="rightLabel" destination="PpG-dU-tmg" id="71K-jL-bKI"/>
                         <outlet property="rightSceneView" destination="JsU-yv-DqX" id="hts-kH-Mu4"/>
                         <outlet property="widthSceneConstraint" destination="zw0-Rl-jc9" id="XwY-aa-Bk4"/>
                     </connections>
