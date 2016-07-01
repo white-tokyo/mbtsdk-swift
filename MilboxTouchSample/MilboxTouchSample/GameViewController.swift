@@ -10,6 +10,7 @@ import UIKit
 import QuartzCore
 import SceneKit
 import MilboxTouch
+import CoreMotion
 
 class GameViewController: MBTViewControllerBase {
     var textView: SCNText?
@@ -82,9 +83,11 @@ class GameViewController: MBTViewControllerBase {
     }
     override func onTap() {
         textView?.string = "タップ！"
+        NSLog("タップ！")
     }
     override func onDoubleTap() {
         textView?.string = "ダブルタップ！"
+        NSLog("ダブルタップ")
     }
     override func onScroll(rad: CGFloat) {
         textView?.string = "スクロール（\(rad)度）"

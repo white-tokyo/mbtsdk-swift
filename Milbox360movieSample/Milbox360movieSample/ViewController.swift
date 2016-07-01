@@ -83,6 +83,10 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
         cameraPitchNodeLeft.addChildNode(cameraRollNodeLeft)
         cameraYawNodeLeft.addChildNode(cameraPitchNodeLeft)
         
+        let dummyAction = SCNAction.scaleBy(1.0, duration: 1.0)
+        let repeatAction = SCNAction.repeatActionForever(dummyAction)
+        cameraNodeLeft.runAction(repeatAction)//renderer is not called ??
+        
         leftSceneView.scene                         = scene1
         
         if true == activateStereoscopicVideo {
@@ -161,9 +165,6 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     override func willAnimateRotationToInterfaceOrientation(toInterfaceOrientation: UIInterfaceOrientation, duration: NSTimeInterval) {
         let camerasNodeAngles                       = getCamerasNodeAngle()
         
-//        widthSceneConstraint?.active                = (.Portrait != toInterfaceOrientation && .PortraitUpsideDown != toInterfaceOrientation)
-//        heightSceneConstraint?.active               = (.Portrait == toInterfaceOrientation || .PortraitUpsideDown == toInterfaceOrientation)
-        
         for cameraNode in camerasNode {
             cameraNode.eulerAngles                  = SCNVector3Make(Float(camerasNodeAngles[0]), Float(camerasNodeAngles[1]), Float(camerasNodeAngles[2]))
         }
@@ -191,7 +192,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     //MARK: Video Player
     func play(){
-        NSLog("プレイ")
+        NSLog("play!")
         let videoName = "04"
         
         let fileURL: NSURL? = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource(videoName, ofType: "mp4")!)
@@ -295,8 +296,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     }
     
     func m_pause(){
-        NSLog("ポース")
-//        player.pause()
+        NSLog("pause")
         for videoSpriteKitNode in videosSpriteKitNode {
             videoSpriteKitNode.pause()
         }
@@ -305,7 +305,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     }
     
     func m_play() {
-        NSLog("再開")
+        NSLog("play")
 //        player.play()
         for videoSpriteKitNode in videosSpriteKitNode {
             videoSpriteKitNode.play()
@@ -314,7 +314,7 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     }
     
     override func onSetupCompleted() {
-        NSLog("初期化完了")
+        NSLog("setupCompleted")
     }
     
     override func onTap() {
@@ -324,8 +324,6 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
     
     //MARK: Render the scene
     func renderer(aRenderer: SCNSceneRenderer, updateAtTime time: NSTimeInterval){
-        NSLog("render!")
-        
         // Render the scene
         dispatch_async(dispatch_get_main_queue()) { [weak self] () -> Void in
             if let strongSelf = self {
@@ -333,7 +331,6 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
                     let currentAttitude                                     = motion.attitude
                     
                     var roll : Double                                       = currentAttitude.roll
-                    NSLog("roll:\(roll)")
                     
                     if(UIApplication.sharedApplication().statusBarOrientation == UIInterfaceOrientation.LandscapeRight) {
                         roll                                                = -1.0 * (-M_PI - roll)
@@ -354,13 +351,25 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
             }
         }
     }
+    override func onDoubleTap() {
+        NSLog("currentTime:\(CMTimeGetSeconds(player.currentTime()))")
+    }
     
+    var scrollRad:CGFloat = 0
     override func onScroll(rad: CGFloat) {
-        NSLog("スクロール:\(rad)")
-        
+        NSLog("scroll:\(rad) total : \(scrollRad)")
+        scrollRad += rad
+    }
+    override func onScrollFinish() {
+        let seekTime = scrollRad / 10.0
         var currentTime:Float64 = CMTimeGetSeconds(player.currentTime())
-        currentTime += Float64(rad)
+//        NSLog("seek time : \(seekTime) current :\(currentTime)")
+        currentTime += Float64(seekTime)
+//        NSLog("targetTime :\(currentTime)")
+        
         player.seekToTime(CMTimeMakeWithSeconds(currentTime,Int32(NSEC_PER_SEC)), toleranceBefore: kCMTimeZero, toleranceAfter: kCMTimeZero)
+        scrollRad = 0
+//        NSLog("currentTime:\(CMTimeGetSeconds(player.currentTime()))")
     }
     
     override func viewDidLayoutSubviews() {

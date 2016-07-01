@@ -12,24 +12,60 @@ import UIKit
 
 public class MBTViewControllerBase: UIViewController {
     
-    /// ヘルパーのセットアップが完了しているか
-    var setupState: MBTViewControllerState {
+    public var setupState: MBTViewControllerState {
         if let setupState = state as? MBTSetupState {
             return setupState.isSettingUp ? .SettingUp : .NotReady
         }
         return .Ready
     }
-    var setupStageCount = 50
     
-    // イベントを検知する誤差範囲パラメータ
-    var tapDetectSpan: CGFloat = 1
-    var tapDetectTimeSpan: NSTimeInterval = 0.3
-    var doubleTapDetectSpan: CGFloat = 10
-    var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
-    var swipeDetectSpan: CGFloat = 50
+    //MARK: setupStage parameters
     
-//    private var currentSetupStageCount = 0
-//    private var setupStageAllowed = false
+    public var setupStageCount: Int = 50 {
+        didSet{
+            if let state = state as? MBTSetupState {
+                state.stageLimit = setupStageCount
+            }
+        }
+    }
+    public var setupTorrelance: CGFloat = 5 {
+        didSet{
+            if let state = state as? MBTSetupState {
+                state.torrelance = setupTorrelance
+            }
+        }
+    }
+    
+    //MARK: detectStage parameters
+    
+    public var tapDetectTorrelance: CGFloat = 25{
+        didSet{
+            if let state = state as? MBTDetectState {
+                state.tapDetectTorrelence = tapDetectTorrelance
+            }
+        }
+    }
+    public var tapDetectDuration: NSTimeInterval = 0.3{
+        didSet{
+            if let state = state as? MBTDetectState {
+                state.tapDetectDuration = tapDetectDuration
+            }
+        }
+    }
+    public var doubleTapDetectTorrelance: CGFloat = 10{
+        didSet{
+            if let state = state as? MBTDetectState {
+                state.doubleTapDetectTorrelence = doubleTapDetectTorrelance
+            }
+        }
+    }
+    public var doubleTapDetectDuration: NSTimeInterval = 0.3{
+        didSet{
+            if let state = state as? MBTDetectState {
+                state.doubleTapDetectDuration = doubleTapDetectDuration
+            }
+        }
+    }
     
     private var leftLimit: CGFloat = 0
     private var rightLimit: CGFloat = 0
@@ -43,22 +79,22 @@ public class MBTViewControllerBase: UIViewController {
         if state is MBTSetupState {
             let ss = MBTSetupState()
             ss.stageLimit = setupStageCount
-            ss.isSettingUp = true
+            ss.torrelance = setupTorrelance
             state = ss
         }
     }
     public override func touchesBegan(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.locationInView(self.view).y
-            NSLog("began rad:\(positionToAngle(position))")
-            state.touchBegan(positionToAngle(position))
+//            NSLog("began pos:\(position)")
+            state.touchBegan(position)
         }
     }
     public override func touchesMoved(touches: Set<UITouch>, withEvent event: UIEvent?) {
         if let touch = touches.first {
             let position = touch.locationInView(self.view).y
-            NSLog("move rad:\(positionToAngle(position))")
-            state.touchMoved(positionToAngle(position))
+//            NSLog("move pos:\(position)")
+            state.touchMoved(position)
             if let detectState = state as? MBTDetectState {
                 if let delta = detectState.checkScroll() {
                     onScroll(delta)
@@ -70,7 +106,7 @@ public class MBTViewControllerBase: UIViewController {
 //        NSLog("ended")
         if let touch = touches.first {
             let endPosition = touch.locationInView(self.view).y
-            state.touchEnded(positionToAngle(endPosition))
+            state.touchEnded(endPosition)
             
             if let setupState = state as? MBTSetupState {
                 if setupState.setupCompleted {
@@ -78,7 +114,16 @@ public class MBTViewControllerBase: UIViewController {
                     leftLimit = setupState.leftLimit
                     rightLimit = setupState.rightLimit
                     onSetupCompleted()
-                    state = MBTDetectState()
+                    
+                    //change state to DetectingState
+                    let detectState = MBTDetectState()
+                    detectState.tapDetectTorrelence = tapDetectTorrelance
+                    detectState.tapDetectDuration = tapDetectDuration
+                    detectState.doubleTapDetectTorrelence = doubleTapDetectTorrelance
+                    detectState.doubleTapDetectDuration = doubleTapDetectDuration
+                    detectState.leftLimit = leftLimit
+                    detectState.rightLimit = rightLimit
+                    state = detectState
                 }
             }else if let detectState = state as? MBTDetectState {
                 if detectState.checkTap() {
@@ -88,25 +133,18 @@ public class MBTViewControllerBase: UIViewController {
                 }else if let swipe = detectState.checkSwipe() {
                     onSwipe(swipe.speed, direction: swipe.direction)
                 }
+                
+                if detectState.scrolled {
+                    detectState.scrolled = false
+                    onScrollFinish()
+                }
             }
             
         }
     }
     
     
-    func positionToAngle(position: CGFloat) -> CGFloat {
-        if setupState != .Ready {
-            return position
-        }
-        let dir = position - leftLimit
-        let limitSpan = rightLimit - leftLimit
-        let rate = dir / limitSpan
-        let pi = CGFloat(M_PI)
-        let correction: CGFloat = 140
-        let angle = rate * 360 + correction
-        return angle >= 360 ? angle - 360 : angle
-        
-    }
+    
     
     
     public func onTap() {
@@ -120,11 +158,14 @@ public class MBTViewControllerBase: UIViewController {
     }
     
     /**
-     回転イベント
-     - parameter rad: 時計回りの回転角
+     rotation event
+     - parameter rad: anticlockwise radian
      */
     public func onScroll(rad: CGFloat) {//時計回りは左方向に検知される
         NSLog("onscroll")
+    }
+    public func onScrollFinish(){
+        NSLog("scroll finish")
     }
     
     public func onSetupCompleted() {
@@ -133,13 +174,13 @@ public class MBTViewControllerBase: UIViewController {
 }
 
 class MBTState {
-    func touchBegan(anglePosition: CGFloat) {
+    func touchBegan(position: CGFloat) {
         NSLog("Override me !")
     }
-    func touchMoved(anglePosition: CGFloat) {
+    func touchMoved(position: CGFloat) {
         NSLog("Override me !")
     }
-    func touchEnded(anglePosition: CGFloat) {
+    func touchEnded(position: CGFloat) {
         NSLog("Override me !")
     }
 }
@@ -149,18 +190,8 @@ class MBTSetupState: MBTState {
     var torrelance: CGFloat = 5
     var rightLimitHistory: [CGFloat] = []
     var leftLimitHistory: [CGFloat] = []
-    var isSettingUp: Bool = false {
-        didSet {
-            if oldValue && !isSettingUp {//trueからfalseへの変更拒否
-                isSettingUp = true
-                return
-            }
-            if isSettingUp && !oldValue {
-                NSLog("start initialize...")
-                leftLimitHistory = []
-                rightLimitHistory = []
-            }
-        }
+    var isSettingUp: Bool {
+        return rightLimitHistory.count == 0 && leftLimitHistory.count == 0
     }
     var leftLimit: CGFloat = 0
     var rightLimit: CGFloat = 0
@@ -198,24 +229,26 @@ class MBTSetupState: MBTState {
             leftLimitHistory.removeFirst()
         }
     }
-    override func touchMoved(anglePosition: CGFloat) {
-        leftLimit = leftLimit == 0 ? anglePosition : min(anglePosition, leftLimit)
-        rightLimit = rightLimit == 0 ? anglePosition : max(anglePosition, rightLimit)
+    override func touchMoved(position: CGFloat) {
+        leftLimit = leftLimit == 0 ? position : min(position, leftLimit)
+        rightLimit = rightLimit == 0 ? position : max(position, rightLimit)
         appendHistory(rightLimit, left: leftLimit)
         NSLog("\nright: \(rightLimit)\nleft: \(leftLimit)")
     }
-    override func touchBegan(anglePosition: CGFloat){
+    override func touchBegan(position: CGFloat){
     }
-    override func touchEnded(anglePosition: CGFloat){
+    override func touchEnded(position: CGFloat){
     }
     
 }
 
-class MBTDetectState: MBTState {
-    var tapDetectSpan: CGFloat = 1
-    var tapDetectTimeSpan: NSTimeInterval = 0.3
-    var doubleTapDetectSpan: CGFloat = 10
-    var doubleTapDetectTimeSpan: NSTimeInterval = 0.3
+private class MBTDetectState: MBTState {
+    var tapDetectTorrelence: CGFloat = 10//radian
+    var tapDetectDuration: NSTimeInterval = 0.3//sec
+    var doubleTapDetectTorrelence: CGFloat = 10//radian
+    var doubleTapDetectDuration: NSTimeInterval = 0.3
+    var leftLimit:CGFloat = 0
+    var rightLimit:CGFloat = 0
     
     var tapStartTime: NSDate = NSDate()
     var tapStartAnglePosition: CGFloat = 0
@@ -225,35 +258,41 @@ class MBTDetectState: MBTState {
     private var isDoubleTap: Bool = false
     private var isTap: Bool = false
     private var swipe: Swipe?
+    private var scrolled: Bool = false
     
-    override func touchBegan(anglePosition:CGFloat) {
-//        NSLog("DetectStateタップ開始")
+    override func touchBegan(position:CGFloat) {
+        let anglePosition = positionToAngle(position)
+        
         tapStartTime = NSDate()
         tapStartAnglePosition = anglePosition
         lastMovePosition = tapStartAnglePosition
+//        NSLog("beganRad \(tapStartAnglePosition)")
     }
-    override func touchMoved(anglePosition: CGFloat){
-//        NSLog("detectState移動")
+    override func touchMoved(position: CGFloat){
+        let anglePosition = positionToAngle(position)
         moveDelta = anglePosition - lastMovePosition
         lastMovePosition = anglePosition
+        if !scrolled && checkScroll() != nil {
+            scrolled = true
+        }
+//        NSLog("detect: move -> delta :: \(moveDelta)")
     }
-    override func touchEnded(anglePosition: CGFloat){
-//        NSLog("detectState終了")
+    override func touchEnded(position: CGFloat){
+        let anglePosition = positionToAngle(position)
         let currentTime = NSDate()
         let tappingTime = currentTime.timeIntervalSinceDate(tapStartTime)
+//        NSLog("endrad:: \(anglePosition)\ntime :: \(tappingTime)\ndelta\(anglePosition-tapStartAnglePosition)")
+        
         if touchIsTap(anglePosition, tappingTimeSpan: tappingTime) {
             let currentTap = Tap(position: anglePosition, time: currentTime)
-            if lastTap?.isDoubleTap(currentTap, detectSpan: doubleTapDetectSpan, detectTimeSpan: doubleTapDetectTimeSpan) ?? false {
-                NSLog("ダブルタップ")
+            if lastTap?.isDoubleTap(currentTap, detectSpan: doubleTapDetectTorrelence, detectTimeSpan: doubleTapDetectDuration) ?? false {
                 isDoubleTap = true
                 lastTap = nil
             }else {
-                NSLog("タップ検知")
                 isTap = true
                 lastTap = currentTap
             }
         }else if toucheIsSwipe(anglePosition, tappingTimeSpan: tappingTime) {
-            NSLog("スワイプ検知:")
             let sp = tapStartAnglePosition
             let ep = anglePosition
             swipe = Swipe(startAnglePosition: sp, endAnglePosition: ep, timeSpan: tappingTime)
@@ -261,7 +300,8 @@ class MBTDetectState: MBTState {
     }
     
     func checkScroll() -> CGFloat? {
-        if fabs(moveDelta) > tapDetectSpan {
+        let moveDist = fabs(moveDelta)
+        if moveDist > 0.3 && moveDist < 10{
             return moveDelta
         }
         return nil
@@ -285,14 +325,30 @@ class MBTDetectState: MBTState {
     }
     
     private func touchIsTap(anglePosition: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
-        let spanCheck = fabs(tapStartAnglePosition - anglePosition) < tapDetectSpan
-        let timeCheck = tappingTimeSpan < tapDetectTimeSpan
+        let spanCheck = fabs(tapStartAnglePosition - anglePosition) < tapDetectTorrelence
+        let timeCheck = tappingTimeSpan < tapDetectDuration
         return spanCheck && timeCheck
     }
     private func toucheIsSwipe(anglePosition: CGFloat, tappingTimeSpan: NSTimeInterval) -> Bool {
-        let spanCheck = fabs(tapStartAnglePosition - anglePosition) > tapDetectSpan
-        let timeCheck = tappingTimeSpan < tapDetectTimeSpan
-        return spanCheck && timeCheck
+        let angleCheck = fabs(tapStartAnglePosition - anglePosition) > tapDetectTorrelence
+        let timeCheck = tappingTimeSpan < tapDetectDuration
+        return angleCheck && timeCheck
+    }
+    
+    private func positionToAngle(var position: CGFloat) -> CGFloat {
+        if position < leftLimit {
+            position = leftLimit
+        }else if rightLimit < position {
+            position = rightLimit
+        }
+        let dir = position - leftLimit
+        let limitSpan = rightLimit - leftLimit
+        let rate = dir / limitSpan
+        let pi = CGFloat(M_PI)
+        let correction: CGFloat = 140
+        let angle = rate * 360 + correction
+        return angle >= 360 ? angle - 360 : angle
+        
     }
 }
 
@@ -355,7 +411,7 @@ class Swipe {
         self.startAnglePosition = startAnglePosition
         self.endAnglePosition = endAnglePosition
         self.timeSpan = timeSpan
-        NSLog("swipe:::\ns: \(startAnglePosition)\ns: \(endAnglePosition)")
+//        NSLog("swipe:::\ns: \(startAnglePosition)\ns: \(endAnglePosition)")
     }
     
     func checkAngleBlock(angle: CGFloat) -> AngleBlock {
