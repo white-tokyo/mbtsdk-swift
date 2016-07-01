@@ -227,25 +227,6 @@ class ViewController: MBTViewControllerBase, SCNSceneRendererDelegate {
             
             let mask                                                    = SKShapeNode(rect: CGRectMake(0, 0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
             mask.fillColor                                              = SKColor.blackColor()
-            
-//                let cropNode                                                = SKCropNode()
-//                cropNode.maskNode                                           = mask
-//                
-//                cropNode.addChild(videoSpriteKitNodeLeft)
-//                cropNode.yScale                                             = 2
-//                cropNode.position                                           = CGPoint(x: 0, y: 0)
-//                
-//                let mask2                                                   = SKShapeNode(rect: CGRectMake(0, spriteKitScene1.size.width / 2.0, spriteKitScene1.size.width, spriteKitScene1.size.width / 2.0))
-//                mask2.fillColor                                             = SKColor.blackColor()
-//                let cropNode2                                               = SKCropNode()
-//                cropNode2.maskNode                                          = mask2
-//                
-//                cropNode2.addChild(videoSpriteKitNodeRight)
-//                cropNode2.yScale                                            = 2
-//                cropNode2.position                                          = CGPoint(x: 0, y: -spriteKitScene1.size.width)
-//                
-//                spriteKitScene1.addChild(cropNode2)
-//                spriteKitScene2.addChild(cropNode)
             spriteKitScene1.addChild(videoSpriteKitNodeLeft)
             spriteKitScene2.addChild(videoSpriteKitNodeRight)
             
