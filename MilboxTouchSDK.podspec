@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
 
 s.name         = "MilboxTouchSDK"
-s.version      = "1.0.0"
+s.version      = "1.0.1"
 s.summary      = "MilboxTouch sdk for ios."
 s.homepage     = "https://github.com/white-tokyo/mbtsdk-swift"
 s.license      = { :type => "MIT", :file => "LICENSE" }
