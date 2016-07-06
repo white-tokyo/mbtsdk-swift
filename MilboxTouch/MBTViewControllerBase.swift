@@ -335,16 +335,17 @@ private class MBTDetectState: MBTState {
         return angleCheck && timeCheck
     }
     
-    private func positionToAngle(var position: CGFloat) -> CGFloat {
+    private func positionToAngle(position: CGFloat) -> CGFloat {
+        var pos = position
         if position < leftLimit {
-            position = leftLimit
+            pos = leftLimit
         }else if rightLimit < position {
-            position = rightLimit
+            pos = rightLimit
         }
-        let dir = position - leftLimit
+        let dir = pos - leftLimit
         let limitSpan = rightLimit - leftLimit
         let rate = dir / limitSpan
-        let pi = CGFloat(M_PI)
+//        let pi = CGFloat(M_PI)
         let correction: CGFloat = 140
         let angle = rate * 360 + correction
         return angle >= 360 ? angle - 360 : angle
