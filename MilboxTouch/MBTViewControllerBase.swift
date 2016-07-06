@@ -342,7 +342,7 @@ private class MBTDetectState: MBTState {
         }else if rightLimit < position {
             pos = rightLimit
         }
-        let dir = position - leftLimit
+        let dir = pos - leftLimit
         let limitSpan = rightLimit - leftLimit
         let rate = dir / limitSpan
 //        let pi = CGFloat(M_PI)
